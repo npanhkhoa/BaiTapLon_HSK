@@ -9,7 +9,8 @@ public class TestConnection {
     public static void main(String[] args) {
         try {
             ConnectDB.getInstance().connect();
-            Connection con = ConnectDB.getInstance().getConnection();
+            ConnectDB.getInstance();
+			Connection con = ConnectDB.getConnection();
 
             String sql = "SELECT TOP 5 maSanPham, tenSanPham FROM SanPham";
             Statement stmt = con.createStatement();
