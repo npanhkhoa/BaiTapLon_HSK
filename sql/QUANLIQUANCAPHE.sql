@@ -269,6 +269,9 @@ VALUES
 ALTER TABLE HoaDon
 ADD trangThaiThanhToan NVARCHAR(50);
 
+ALTER TABLE PhuongThucThanhToan
+ADD trangThaiThanhToan NVARCHAR(50);
+
 
 
 

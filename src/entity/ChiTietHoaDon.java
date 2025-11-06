@@ -85,21 +85,16 @@ public class ChiTietHoaDon {
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(thanhTien);
+	public String toString() {
+		return "ChiTietHoaDon [hoaDon=" + hoaDon + ", sanPham=" + sanPham + ", soLuong=" + soLuong + ", giaBan="
+				+ giaBan + ", thanhTien=" + thanhTien + "]";
 	}
+	
+	
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ChiTietHoaDon other = (ChiTietHoaDon) obj;
-		return Objects.equals(thanhTien, other.thanhTien);
-	}
+	
+
+	
 	
 	
 	

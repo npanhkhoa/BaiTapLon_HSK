@@ -8,21 +8,21 @@ public class SanPham {
 	private String tenSanPham;
 	private BigDecimal giaBan;
 	private int soLuong;
-	private String maNCC;
+	private NhaCungCap nhaCungCap;
 	private String donViTinh;
 	
 	public SanPham() {
 		super();
 	}
 
-	public SanPham(String maSanPham, String tenSanPham, BigDecimal giaBan, 
-			       int soLuong, String maNCC,String donViTinh) {
+	public SanPham(String maSanPham, String tenSanPham, BigDecimal giaBan, int soLuong, NhaCungCap nhaCungCap,
+			String donViTinh) {
 		super();
 		this.maSanPham = maSanPham;
 		this.tenSanPham = tenSanPham;
 		this.giaBan = giaBan;
 		this.soLuong = soLuong;
-		this.maNCC = maNCC;
+		this.nhaCungCap = nhaCungCap;
 		this.donViTinh = donViTinh;
 	}
 
@@ -69,12 +69,12 @@ public class SanPham {
 		this.soLuong = soLuong;
 	}
 
-	public String getMaNCC() {
-		return maNCC;
+	public NhaCungCap getNhaCungCap() {
+		return nhaCungCap;
 	}
 
-	public void setMaNCC(String maNCC) {
-		this.maNCC = maNCC;
+	public void setNhaCungCap(NhaCungCap nhaCungCap) {
+		this.nhaCungCap = nhaCungCap;
 	}
 
 	public String getDonViTinh() {
@@ -84,8 +84,6 @@ public class SanPham {
 	public void setDonViTinh(String donViTinh) {
 		this.donViTinh = donViTinh;
 	}
-	
-	
 
 	@Override
 	public int hashCode() {
@@ -107,8 +105,15 @@ public class SanPham {
 	@Override
 	public String toString() {
 		return "SanPham [maSanPham=" + maSanPham + ", tenSanPham=" + tenSanPham + ", giaBan=" + giaBan + ", soLuong="
-				+ soLuong + ", maNCC=" + maNCC + ", donViTinh=" + donViTinh + "]";
+				+ soLuong + ", nhaCungCap=" + nhaCungCap + ", donViTinh=" + donViTinh + "]";
 	}
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

@@ -12,13 +12,18 @@ public class HoaDon {
 	private String maKhachHang;
 	private String maKM;
 	private int trangThaiThanhToan;
+	private String ghiChu;
 	
 	private ArrayList<ChiTietHoaDon> dsChiTiet;
 	
+	public HoaDon() {
+		super();
+	}
+
 // Constructor cho việc lấy hóa đơn từ CSDL
 	public HoaDon(String maHoaDon, String maNhanVien, LocalDate ngayLap, 
 				  double tongTien, String maPTTT,String maKhachHang, 
-			      String maKM, int trangThaiThanhToan) {
+			      String maKM, int trangThaiThanhToan , String ghiChu) {
 		
 		this.maHoaDon = maHoaDon;
 		this.maNhanVien = maNhanVien;
@@ -28,13 +33,14 @@ public class HoaDon {
 		this.maKhachHang = maKhachHang;
 		this.maKM = maKM;
 		this.trangThaiThanhToan = trangThaiThanhToan;
+		this.ghiChu = ghiChu;
 		this.dsChiTiet = new ArrayList<>();
 	}
 	
 //Constructor cho việc tạo hóa đơn mới (chưa có mã)
 	public HoaDon(String maNhanVien, LocalDate ngayLap, double tongTien, 
 		          String maPTTT, String maKhachHang,
-		          String maKM, int trangThaiThanhToan) {
+		          String maKM, int trangThaiThanhToan ,String ghiChu) {
 	    this.maHoaDon = null; //chấp nhận null khi tạo 1 hoá đơn mới
 	    this.maNhanVien = maNhanVien;
 	    this.ngayLap = ngayLap;
@@ -43,6 +49,7 @@ public class HoaDon {
 	    this.maKhachHang = maKhachHang;
 	    this.maKM = maKM;
 	    this.trangThaiThanhToan = trangThaiThanhToan;
+	    this.ghiChu = ghiChu;
 	    this.dsChiTiet = new ArrayList<>();
 }
 
@@ -114,6 +121,14 @@ public class HoaDon {
 
 	public void setTrangThaiThanhToan(int trangThaiThanhToan) {
 		this.trangThaiThanhToan = trangThaiThanhToan;
+	}
+	
+	public String getGhiChu() {
+		return ghiChu;
+	}
+
+	public void setGhiChu(String ghiChu) {
+		this.ghiChu = ghiChu;
 	}
 
 	public ArrayList<ChiTietHoaDon> getDsChiTiet() {
