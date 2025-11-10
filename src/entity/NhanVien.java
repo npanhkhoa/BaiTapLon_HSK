@@ -9,7 +9,7 @@ public class NhanVien {
     private String diaChi;
     private String soDienThoai;
     private ChucVu chucVu;
-    private double luongNV;
+    private float luongNV;
     private LocalDate ngayVaoLam;
     private String gioiTinh;
     private CaLamViec caLamViec;
@@ -19,7 +19,7 @@ public class NhanVien {
     }
 
     public NhanVien(String maNhanVien, String tenNhanVien, int tuoi, String diaChi,
-                    String soDienThoai, ChucVu chucVu, double luongNV,
+                    String soDienThoai, ChucVu chucVu, float luongNV,
                     LocalDate ngayVaoLam, String gioiTinh, CaLamViec caLamViec) {
         super();
         setMaNhanVien(maNhanVien);
@@ -94,11 +94,11 @@ public class NhanVien {
         this.chucVu = chucVu;
     }
 
-    public double getLuongNV() {
+    public float getLuongNV() {
         return luongNV;
     }
 
-    public void setLuongNV(double luongNV) {
+    public void setLuongNV(float luongNV) {
         if (luongNV < 0)
             throw new IllegalArgumentException("Lương không được âm!");
         this.luongNV = luongNV;
