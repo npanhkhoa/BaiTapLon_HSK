@@ -24,7 +24,8 @@ public class KhuyenMai_DAO {
 		try (Statement stm = con.createStatement(); ResultSet rs = stm.executeQuery(sql)) {
 
 			while (rs.next()) {
-				KhuyenMai km = new KhuyenMai(rs.getString("maKM"), rs.getString("tenKM"), 
+				// maKM là INT IDENTITY, convert sang String
+				KhuyenMai km = new KhuyenMai(String.valueOf(rs.getInt("maKM")), rs.getString("tenKM"), 
 											 rs.getString("moTa"),rs.getDouble("phanTramGiam"));
 				ds.add(km);
 			}
@@ -35,12 +36,12 @@ public class KhuyenMai_DAO {
 	}
 
 	public boolean themKhuyenMai(KhuyenMai km) {
-		String sql = "INSERT INTO KhuyenMai (maKM, tenKM, moTa ,phanTramGiam) VALUES (?, ?, ?, ?,)";
+		// Nếu maKM là IDENTITY, không cần insert maKM
+		String sql = "INSERT INTO KhuyenMai (tenKM, moTa, phanTramGiam) VALUES (?, ?, ?)";
 		try (PreparedStatement pstm = con.prepareStatement(sql)) {
-			pstm.setString(1, km.getMaKM());
-			pstm.setString(2, km.getTenKM());
-			pstm.setString(3, km.getMoTa());
-			pstm.setDouble(4, km.getPhanTramGiam());
+			pstm.setString(1, km.getTenKM());
+			pstm.setString(2, km.getMoTa());
+			pstm.setDouble(3, km.getPhanTramGiam());
 			return pstm.executeUpdate() > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -55,12 +56,12 @@ public class KhuyenMai_DAO {
 	 * @return true nếu cập nhật thành công, false nếu thất bại.
 	 */
 	public boolean capNhatKhuyenMai(KhuyenMai khuyenMaiMoi) {
-		String sql = "UPDATE KhuyenMai SET tenKM = ?, moTA = ? ,phanTramGiam = ? WHERE maKM = ?";
+		String sql = "UPDATE KhuyenMai SET tenKM = ?, moTa = ?, phanTramGiam = ? WHERE maKM = ?";
 		try (PreparedStatement pstm = con.prepareStatement(sql)) {
 			pstm.setString(1, khuyenMaiMoi.getTenKM());
 			pstm.setString(2, khuyenMaiMoi.getMoTa());
 			pstm.setDouble(3, khuyenMaiMoi.getPhanTramGiam());
-			pstm.setString(4, khuyenMaiMoi.getMaKM());
+			pstm.setInt(4, Integer.parseInt(khuyenMaiMoi.getMaKM()));
 
 			return pstm.executeUpdate() > 0;
 		} catch (SQLException e) {
@@ -72,11 +73,12 @@ public class KhuyenMai_DAO {
 	public KhuyenMai timTheoMaKhuyenMai(String maKM) {
 		String sql = "SELECT * FROM KhuyenMai WHERE maKM = ?";
 		try (PreparedStatement pstm = con.prepareStatement(sql)) {
-			pstm.setString(1, maKM);
+			pstm.setInt(1, Integer.parseInt(maKM));
 
 			try (ResultSet rs = pstm.executeQuery()) {
 				if (rs.next()) {
-					KhuyenMai km = new KhuyenMai(rs.getString("maKM"), rs.getString("tenKM"), 
+					// maKM là INT IDENTITY, convert sang String
+					KhuyenMai km = new KhuyenMai(String.valueOf(rs.getInt("maKM")), rs.getString("tenKM"), 
 							 	                 rs.getString("moTa"),rs.getDouble("phanTramGiam"));
 					return km;
 				}
@@ -91,8 +93,19 @@ public class KhuyenMai_DAO {
 		String sql = "UPDATE KhuyenMai SET phanTramGiam = ? WHERE maKM = ?";
 		try (PreparedStatement pstm = con.prepareStatement(sql)) {
 			pstm.setDouble(1, phanTramGiamMoi);
-			pstm.setString(2, maKM);
+			pstm.setInt(2, Integer.parseInt(maKM));
 
+			return pstm.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean xoaKhuyenMai(String maKM) {
+		String sql = "DELETE FROM KhuyenMai WHERE maKM = ?";
+		try (PreparedStatement pstm = con.prepareStatement(sql)) {
+			pstm.setInt(1, Integer.parseInt(maKM));
 			return pstm.executeUpdate() > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();

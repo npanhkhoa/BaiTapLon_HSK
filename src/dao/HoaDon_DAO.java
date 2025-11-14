@@ -31,8 +31,8 @@ public class HoaDon_DAO {
 			ResultSet rs = pstm.executeQuery();
 			while (rs.next()) {
 				HoaDon hd = new HoaDon(rs.getString("maHoaDon"), rs.getString("maNhanVien"),rs.getDate("ngayLap").toLocalDate(),
-									   rs.getDouble("tongTien") , rs.getString("maPTTT") , rs.getString("maKhachHang") ,
-									   rs.getString("maKM") , rs.getInt("trangThaiThanhToan") , rs.getString("ghiChu"));
+									   rs.getDouble("tongTien") , rs.getString("maPTTT") , rs.getString("maKhachHang") , 
+									   rs.getString("maKM") , rs.getInt("trangThaiThanhToan") , null);
 
 				ds.add(hd);
 			}
@@ -46,7 +46,7 @@ public class HoaDon_DAO {
 	 * Thêm một hóa đơn mới vào CSDL (bao gồm cả chi tiết) Đây là một giao dịch
 	 */
 	public boolean themHoaDon(HoaDon hd) {
-		String sqlHD = "INSERT INTO HoaDon (maHoaDon, maNhanVien , ngayLap , tongTien , maPTTT , maKhachHang , maKM , trangThaiThanhToan , ghiChu) VALUES (?, ?, ?, ?, ?, ?, ?, ? , ?)";
+		String sqlHD = "INSERT INTO HoaDon (maHoaDon, maNhanVien , ngayLap , tongTien , maPTTT , maKhachHang , maKM , trangThaiThanhToan) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
 		try {
 			con.setAutoCommit(false);
@@ -61,7 +61,6 @@ public class HoaDon_DAO {
 				pstmHD.setString(6, hd.getMaKhachHang());
 				pstmHD.setString(7, hd.getMaKM());
 				pstmHD.setInt(8, hd.getTrangThaiThanhToan());
-				pstmHD.setString(9, hd.getGhiChu());				
 				pstmHD.executeUpdate();
 			}
 
@@ -103,7 +102,7 @@ public class HoaDon_DAO {
 				if (rs.next()) {
 					HoaDon hd = new HoaDon(rs.getString("maHoaDon"), rs.getString("maNhanVien"),rs.getDate("ngayLap").toLocalDate(),
 							     rs.getDouble("tongTien") , rs.getString("maPTTT") , rs.getString("maKhachHang"),
-							     rs.getString("maKM") , rs.getInt("trangThaiThanhToan") , rs.getString("ghiChu"));
+							     rs.getString("maKM") , rs.getInt("trangThaiThanhToan") , null);
 					return hd;
 				}
 			}
@@ -126,7 +125,7 @@ public class HoaDon_DAO {
 			while (rs.next()) {
 				HoaDon hd = new HoaDon(rs.getString("maHoaDon"), rs.getString("maNhanVien"),rs.getDate("ngayLap").toLocalDate(),
 						   	 rs.getDouble("tongTien") , rs.getString("maPTTT") , rs.getString("maKhachHang"),
-						   	 rs.getString("maKM") , rs.getInt("trangThaiThanhToan") , rs.getString("ghiChu"));
+						   	 rs.getString("maKM") , rs.getInt("trangThaiThanhToan") , null);
 				dsHD.add(hd);
 			}
 		} catch (Exception e) {
@@ -146,7 +145,7 @@ public class HoaDon_DAO {
 			while (rs.next()) {
 				HoaDon hd =	new HoaDon(rs.getString("maHoaDon"), rs.getString("maNhanVien"),rs.getDate("ngayLap").toLocalDate(),
 						     rs.getDouble("tongTien") , rs.getString("maPTTT") , rs.getString("maKhachHang"),
-						     rs.getString("maKM") , rs.getInt("trangThaiThanhToan") , rs.getString("ghiChu"));
+						     rs.getString("maKM") , rs.getInt("trangThaiThanhToan") , null);
 				ds.add(hd);
 			}
 		} catch (SQLException e) {
@@ -165,7 +164,7 @@ public class HoaDon_DAO {
 			while (rs.next()) {
 				HoaDon hd = new HoaDon(rs.getString("maHoaDon"), rs.getString("maNhanVien"),rs.getDate("ngayLap").toLocalDate(),
 						     rs.getDouble("tongTien") , rs.getString("maPTTT") , rs.getString("maKhachHang"),
-						     rs.getString("maKM") , rs.getInt("trangThaiThanhToan") , rs.getString("ghiChu"));
+						     rs.getString("maKM") , rs.getInt("trangThaiThanhToan") , null);
 				dsHD.add(hd);
 			}
 			return (ArrayList<HoaDon>) dsHD;
