@@ -14,7 +14,13 @@ public class PhuongThucThanhToan_DAO {
 	private Connection con;
 
 	public PhuongThucThanhToan_DAO() {
-		con = ConnectDB.getInstance().getConnection();
+		try {
+	        con = ConnectDB.getInstance().getConnection();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        // Nếu muốn dừng chương trình ngay khi kết nối lỗi:
+	        // throw new RuntimeException(e);
+	    }
 	}
 
 	public List<PhuongThucThanhToan> layTatCa() {

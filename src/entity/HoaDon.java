@@ -1,7 +1,12 @@
 package entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 public class HoaDon {
 	private String maHoaDon;
@@ -15,6 +20,7 @@ public class HoaDon {
 	private String ghiChu;
 	
 	private ArrayList<ChiTietHoaDon> dsChiTiet;
+	private List<SanPham> dsachSanPham;
 	
 	public HoaDon() {
 		super();
@@ -35,6 +41,146 @@ public class HoaDon {
 		this.trangThaiThanhToan = trangThaiThanhToan;
 		this.ghiChu = ghiChu;
 		this.dsChiTiet = new ArrayList<>();
+		this.dsachSanPham = new List<SanPham>() {
+			
+			@Override
+			public <T> T[] toArray(T[] a) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public Object[] toArray() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public List<SanPham> subList(int fromIndex, int toIndex) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public int size() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public SanPham set(int index, SanPham element) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public boolean retainAll(Collection<?> c) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public boolean removeAll(Collection<?> c) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public SanPham remove(int index) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public boolean remove(Object o) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public ListIterator<SanPham> listIterator(int index) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public ListIterator<SanPham> listIterator() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public int lastIndexOf(Object o) {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public Iterator<SanPham> iterator() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public boolean isEmpty() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public int indexOf(Object o) {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public SanPham get(int index) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public boolean containsAll(Collection<?> c) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public boolean contains(Object o) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public void clear() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public boolean addAll(int index, Collection<? extends SanPham> c) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public boolean addAll(Collection<? extends SanPham> c) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public void add(int index, SanPham element) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public boolean add(SanPham e) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+		};
 	}
 	
 //Constructor cho việc tạo hóa đơn mới (chưa có mã)
@@ -137,6 +283,39 @@ public class HoaDon {
 
 	public void setDsChiTiet(ArrayList<ChiTietHoaDon> dsChiTiet) {
 		this.dsChiTiet = dsChiTiet;
+	}
+	
+	
+
+	public List<SanPham> getDsachSanPham() {
+		return dsachSanPham;
+	}
+
+	public void setDsachSanPham(List<SanPham> dsachSanPham) {
+		this.dsachSanPham = dsachSanPham;
+	}
+
+	public static boolean insertHoaDon(String maHoaDon2, String maNhanVien2, LocalDate ngayLap2, double tongTien2) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public static boolean insertChiTietHoaDon(String maChiTietHoaDon, String maHoaDon2, String maSanPham,
+			int soLuong, BigDecimal giaBan, BigDecimal thanhTien) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	public char[] getSoLuong() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public BigDecimal getGiaBan() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

@@ -11,7 +11,13 @@ public class NhaCungCap_DAO {
     private Connection con;
 
     public NhaCungCap_DAO() {
-        con = ConnectDB.getInstance().getConnection();
+    	try {
+            con = ConnectDB.getInstance().getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Nếu muốn dừng chương trình ngay khi kết nối lỗi:
+            // throw new RuntimeException(e);
+        }
     }
 
     /**

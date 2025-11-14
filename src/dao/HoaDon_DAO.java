@@ -1,12 +1,15 @@
 package dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import connectDB.ConnectDB;
 import entity.ChiTietHoaDon;
@@ -17,7 +20,13 @@ public class HoaDon_DAO {
 	private ChiTietHoaDon_DAO ctHoaDon_DAO; // Một DAO gọi DAO khác
 
 	public HoaDon_DAO() {
-		con = ConnectDB.getInstance().getConnection();
+		 try {
+	            con = ConnectDB.getInstance().getConnection();
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	            // Nếu muốn dừng chương trình ngay khi kết nối lỗi:
+	            // throw new RuntimeException(e);
+	        }
 		ctHoaDon_DAO = new ChiTietHoaDon_DAO(); // Khởi tạo DAO phụ
 	}
 
@@ -175,4 +184,37 @@ public class HoaDon_DAO {
 		}
 		return null;
 	}
+
+	public boolean isMaHoaDonExists(String maHoaDon) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean insertHoaDon(String maHoaDon, String maNhanVien, LocalDate ngayLap, double tongTien) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean insertChiTietHoaDon(String maChiTietHoaDon, String maHoaDon, String maSanPham, BigDecimal soLuong,
+			BigDecimal giaBan, BigDecimal thanhTien) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public List<HoaDon> getAllDsachHoaDon(String tenDangNhap) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Map<String, Integer> get8MonBanChayNhat(LocalTime startDate, LocalTime endDate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Map<LocalDate, Double> getDoanhThuTheoThoiGian(LocalTime startDate, LocalTime endDate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
 }

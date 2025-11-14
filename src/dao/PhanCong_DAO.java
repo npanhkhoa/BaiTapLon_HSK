@@ -13,7 +13,13 @@ public class PhanCong_DAO {
     private Connection con;
 
     public PhanCong_DAO() {
-        con = ConnectDB.getInstance().getConnection();
+    	try {
+            con = ConnectDB.getInstance().getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Nếu muốn dừng chương trình ngay khi kết nối lỗi:
+            // throw new RuntimeException(e);
+        }
     }
 
     // ---------------- LẤY TOÀN BỘ PHÂN CÔNG ----------------
@@ -24,8 +30,8 @@ public class PhanCong_DAO {
              ResultSet rs = stm.executeQuery(sql)) {
 
             while (rs.next()) {
-                NhanVien nv = new NhanVien(rs.getString("maNhanVien"), null, 0, null, null, null, 0, null, null, null);
-                CaLamViec ca = new CaLamViec(rs.getString("maCa"), null, null, null);
+                NhanVien nv = new NhanVien(rs.getString("maNhanVien"), null, 0, null, null, null, 0, null, null, null, null);
+                CaLamViec ca = new CaLamViec(rs.getString("maCa"), null, null, null, 0, 0, null);
                 
                 PhanCong pc = new PhanCong(
                     rs.getString("maPhanCong"),
@@ -81,8 +87,8 @@ public class PhanCong_DAO {
             ResultSet rs = pstm.executeQuery();
 
             if (rs.next()) {
-                NhanVien nv = new NhanVien(rs.getString("maNhanVien"), null, 0, null, null, null, 0, null, null, null);
-                CaLamViec ca = new CaLamViec(rs.getString("maCa"), null, null, null);
+                NhanVien nv = new NhanVien(rs.getString("maNhanVien"), null, 0, null, null, null, 0, null, null, null, null);
+                CaLamViec ca = new CaLamViec(rs.getString("maCa"), null, null, null, 0, 0, nv);
                 
                 return new PhanCong(
                     rs.getString("maPhanCong"),
@@ -106,8 +112,8 @@ public class PhanCong_DAO {
             ResultSet rs = pstm.executeQuery();
 
             while (rs.next()) {
-                NhanVien nv = new NhanVien(rs.getString("maNhanVien"), null, 0, null, null, null, 0, null, null, null);
-                CaLamViec ca = new CaLamViec(rs.getString("maCa"), null, null, null);
+                NhanVien nv = new NhanVien(rs.getString("maNhanVien"), null, 0, null, null, null, 0, null, null, null, null);
+                CaLamViec ca = new CaLamViec(rs.getString("maCa"), null, null, null, 0, 0, nv);
                 
                 PhanCong pc = new PhanCong(
                     rs.getString("maPhanCong"),

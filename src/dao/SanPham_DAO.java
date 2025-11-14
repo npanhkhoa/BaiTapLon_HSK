@@ -12,7 +12,14 @@ public class SanPham_DAO {
     private Connection con;
 
     public SanPham_DAO() {
-        con = ConnectDB.getInstance().getConnection();
+    	try {
+    		Connection con = ConnectDB.getInstance().getConnection();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Nếu muốn dừng chương trình ngay khi kết nối lỗi:
+            // throw new RuntimeException(e);
+        }
     }
 
     // ---------------- LẤY TOÀN BỘ SẢN PHẨM ----------------
@@ -137,4 +144,21 @@ public class SanPham_DAO {
             return false;
         }
     }
+
+    public List<SanPham> getDsachSanPham() {
+        return layTatCa(); // gọi phương thức đã load sản phẩm từ DB
+    }
+
+
+	public List<SanPham> getSanPhamTheoLoaiSanPham(String loai) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean isMaSanPhamExists(String maSanPham) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
 }

@@ -272,7 +272,43 @@ ADD trangThaiThanhToan NVARCHAR(50);
 ALTER TABLE PhuongThucThanhToan
 ADD trangThaiThanhToan NVARCHAR(50);
 
+--ngày 14/11/2025
+CREATE TABLE TaiKhoan (
+    tenDangNhap NVARCHAR(50) PRIMARY KEY, 
+    matKhau NVARCHAR(50) NOT NULL,         
+    quyen BIT NOT NULL                      
+);
+USE QUANLIQUANCAPHE;
+GO
 
+SELECT * FROM TaiKhoan;
+
+SELECT * FROM sys.tables WHERE name = 'TaiKhoan';
+
+DROP TABLE IF EXISTS TaiKhoan;
+GO
+
+CREATE TABLE TaiKhoan (
+    tenDangNhap NVARCHAR(50) PRIMARY KEY,
+    matKhau NVARCHAR(50) NOT NULL,
+    quyen BIT NOT NULL,
+    maNhanVien VARCHAR(10) NOT NULL,
+    maCaLamViec VARCHAR(10),
+    FOREIGN KEY (maNhanVien) REFERENCES NhanVien(maNhanVien),
+    FOREIGN KEY (maCaLamViec) REFERENCES CaLamViec(maCaLamViec)
+);
+-- Thêm ca làm việc mới
+INSERT INTO CaLamViec (maCaLamViec, thoiGianBatDau, thoiGianKetThuc, tienCongCa, tienDongCa, heSoLuong)
+VALUES 
+('CLV01', '2025-11-15 08:00:00', '2025-11-15 16:00:00', 200000, 0, 1.0),
+('CLV02', '2025-11-15 14:00:00', '2025-11-15 22:00:00', 220000, 0, 1.2);
+
+-- Thêm tài khoản cho nhân viên đã tồn tại
+INSERT INTO TaiKhoan (tenDangNhap, matKhau, quyen, maNhanVien, maCaLamViec)
+VALUES
+('nv01', '123456', 0, 'NV01', 'CLV01'),
+('nv02', '123456', 0, 'NV02', 'CLV02'),
+('admin', 'adminpass', 1, 'NV03', NULL); -- admin có thể không có ca cố định
 
 
 

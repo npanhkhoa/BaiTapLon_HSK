@@ -19,7 +19,13 @@ public class ChiTietHoaDon_DAO {
 	private SanPham_DAO sanPham_DAO;
 
 	public ChiTietHoaDon_DAO() {
-		con = ConnectDB.getInstance().getConnection();
+		 try {
+	            con = ConnectDB.getInstance().getConnection();
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	            // Nếu muốn dừng chương trình ngay khi kết nối lỗi:
+	            // throw new RuntimeException(e);
+	        }
 		sanPham_DAO = new SanPham_DAO();
 	}
 

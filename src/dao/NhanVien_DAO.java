@@ -8,15 +8,19 @@ import connectDB.ConnectDB;
 import entity.NhanVien;
 import entity.ChucVu;
 import entity.CaLamViec;
+import entity.TaiKhoan;
 
 public class NhanVien_DAO {
     private Connection con;
 
     public NhanVien_DAO() {
-        con = ConnectDB.getInstance().getConnection();
+        try {
+            con = ConnectDB.getInstance().getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    // ---------------- LẤY TOÀN BỘ NHÂN VIÊN ----------------
     public List<NhanVien> layTatCa() {
         List<NhanVien> ds = new ArrayList<>();
         String sql = "SELECT * FROM NhanVien";
@@ -25,7 +29,7 @@ public class NhanVien_DAO {
 
             while (rs.next()) {
                 ChucVu chucVu = new ChucVu(rs.getString("maCV"), null, 0);
-                CaLamViec caLamViec = new CaLamViec(rs.getString("maCa"), null, null, null);
+                CaLamViec caLamViec = new CaLamViec(rs.getString("maCa"), null, null, null, 0, 0, null);
                 
                 NhanVien nv = new NhanVien(
                     rs.getString("maNhanVien"),
@@ -37,7 +41,8 @@ public class NhanVien_DAO {
                     rs.getFloat("luongNV"),
                     rs.getDate("ngayVaoLam").toLocalDate(),
                     rs.getString("gioiTinh"),
-                    caLamViec
+                    caLamViec,
+                    null
                 );
                 ds.add(nv);
             }
@@ -47,7 +52,6 @@ public class NhanVien_DAO {
         return ds;
     }
 
-    // ---------------- THÊM NHÂN VIÊN ----------------
     public boolean themNhanVien(NhanVien nv) {
         String sql = "INSERT INTO NhanVien (maNhanVien, tenNhanVien, tuoi, diaChi, soDienThoai, maCV, luongNV, ngayVaoLam, gioiTinh, maCa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstm = con.prepareStatement(sql)) {
@@ -69,9 +73,8 @@ public class NhanVien_DAO {
         }
     }
 
-    // ---------------- CẬP NHẬT NHÂN VIÊN ----------------
     public boolean capNhatNhanVien(NhanVien nv) {
-        String sql = "UPDATE NhanVien SET tenNhanVien = ?, tuoi = ?, diaChi = ?, soDienThoai = ?, maCV = ?, luongNV = ?, ngayVaoLam = ?, gioiTinh = ?, maCa = ? WHERE maNhanVien = ?";
+        String sql = "UPDATE NhanVien SET tenNhanVien=?, tuoi=?, diaChi=?, soDienThoai=?, maCV=?, luongNV=?, ngayVaoLam=?, gioiTinh=?, maCa=? WHERE maNhanVien=?";
         try (PreparedStatement pstm = con.prepareStatement(sql)) {
             pstm.setString(1, nv.getTenNhanVien());
             pstm.setInt(2, nv.getTuoi());
@@ -91,16 +94,14 @@ public class NhanVien_DAO {
         }
     }
 
-    // ---------------- TÌM THEO MÃ ----------------
     public NhanVien timTheoMa(String maNV) {
-        String sql = "SELECT * FROM NhanVien WHERE maNhanVien = ?";
+        String sql = "SELECT * FROM NhanVien WHERE maNhanVien=?";
         try (PreparedStatement pstm = con.prepareStatement(sql)) {
             pstm.setString(1, maNV);
             ResultSet rs = pstm.executeQuery();
-
             if (rs.next()) {
                 ChucVu chucVu = new ChucVu(rs.getString("maCV"), null, 0);
-                CaLamViec caLamViec = new CaLamViec(rs.getString("maCa"), null, null, null);
+                CaLamViec caLamViec = new CaLamViec(rs.getString("maCa"), null, null, null, 0, 0, null);
                 
                 return new NhanVien(
                     rs.getString("maNhanVien"),
@@ -112,7 +113,8 @@ public class NhanVien_DAO {
                     rs.getFloat("luongNV"),
                     rs.getDate("ngayVaoLam").toLocalDate(),
                     rs.getString("gioiTinh"),
-                    caLamViec
+                    caLamViec,
+                    null
                 );
             }
         } catch (SQLException e) {
@@ -121,17 +123,15 @@ public class NhanVien_DAO {
         return null;
     }
 
-    // ---------------- TÌM THEO TÊN ----------------
     public List<NhanVien> timTheoTen(String tenNhanVien) {
         List<NhanVien> dsNV = new ArrayList<>();
         String sql = "SELECT * FROM NhanVien WHERE tenNhanVien LIKE ?";
         try (PreparedStatement pstm = con.prepareStatement(sql)) {
             pstm.setString(1, "%" + tenNhanVien + "%");
             ResultSet rs = pstm.executeQuery();
-
             while (rs.next()) {
                 ChucVu chucVu = new ChucVu(rs.getString("maCV"), null, 0);
-                CaLamViec caLamViec = new CaLamViec(rs.getString("maCa"), null, null, null);
+                CaLamViec caLamViec = new CaLamViec(rs.getString("maCa"), null, null, null, 0, 0, null);
                 
                 NhanVien nv = new NhanVien(
                     rs.getString("maNhanVien"),
@@ -143,7 +143,8 @@ public class NhanVien_DAO {
                     rs.getFloat("luongNV"),
                     rs.getDate("ngayVaoLam").toLocalDate(),
                     rs.getString("gioiTinh"),
-                    caLamViec
+                    caLamViec,
+                    null
                 );
                 dsNV.add(nv);
             }
@@ -153,9 +154,8 @@ public class NhanVien_DAO {
         return dsNV;
     }
 
-    // ---------------- XOÁ NHÂN VIÊN ----------------
     public boolean xoaNhanVien(String maNhanVien) {
-        String sql = "DELETE FROM NhanVien WHERE maNhanVien = ?";
+        String sql = "DELETE FROM NhanVien WHERE maNhanVien=?";
         try (PreparedStatement pstm = con.prepareStatement(sql)) {
             pstm.setString(1, maNhanVien);
             return pstm.executeUpdate() > 0;

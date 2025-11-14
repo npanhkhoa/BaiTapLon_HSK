@@ -107,6 +107,11 @@ public class SanPham {
 		return "SanPham [maSanPham=" + maSanPham + ", tenSanPham=" + tenSanPham + ", giaBan=" + giaBan + ", soLuong="
 				+ soLuong + ", nhaCungCap=" + nhaCungCap + ", donViTinh=" + donViTinh + "]";
 	}
+
+	public String getHinhAnh() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 	

@@ -1,6 +1,7 @@
 package entity;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class NhanVien {
     private String maNhanVien;
@@ -13,6 +14,7 @@ public class NhanVien {
     private LocalDate ngayVaoLam;
     private String gioiTinh;
     private CaLamViec caLamViec;
+    private TaiKhoan taiKhoan;
 
     public NhanVien() {
         super();
@@ -20,8 +22,7 @@ public class NhanVien {
 
     public NhanVien(String maNhanVien, String tenNhanVien, int tuoi, String diaChi,
                     String soDienThoai, ChucVu chucVu, float luongNV,
-                    LocalDate ngayVaoLam, String gioiTinh, CaLamViec caLamViec) {
-        super();
+                    LocalDate ngayVaoLam, String gioiTinh, CaLamViec caLamViec, TaiKhoan taiKhoan) {
         setMaNhanVien(maNhanVien);
         setTenNhanVien(tenNhanVien);
         setTuoi(tuoi);
@@ -32,8 +33,10 @@ public class NhanVien {
         setNgayVaoLam(ngayVaoLam);
         setGioiTinh(gioiTinh);
         setCaLamViec(caLamViec);
+        setTaiKhoan(taiKhoan);
     }
 
+    // Getter & Setter
     public String getMaNhanVien() {
         return maNhanVien;
     }
@@ -134,13 +137,45 @@ public class NhanVien {
         this.caLamViec = caLamViec;
     }
 
+    public TaiKhoan getTaiKhoan() {
+        return taiKhoan;
+    }
+
+    public void setTaiKhoan(TaiKhoan taiKhoan) {
+        if (taiKhoan == null)
+            throw new IllegalArgumentException("Tài khoản không được null!");
+        this.taiKhoan = taiKhoan;
+    }
+
+    // toString
     @Override
     public String toString() {
-        return "NhanVien [maNhanVien=" + maNhanVien + ", tenNhanVien=" + tenNhanVien
-                + ", tuoi=" + tuoi + ", diaChi=" + diaChi + ", soDienThoai=" + soDienThoai
-                + ", chucVu=" + (chucVu != null ? chucVu.getTenCV() : "null")
-                + ", luongNV=" + luongNV + ", ngayVaoLam=" + ngayVaoLam
-                + ", gioiTinh=" + gioiTinh
-                + ", caLamViec=" + (caLamViec != null ? caLamViec.getTenCa() : "null") + "]";
+        return "NhanVien [" +
+                "maNhanVien=" + maNhanVien +
+                ", tenNhanVien=" + tenNhanVien +
+                ", tuoi=" + tuoi +
+                ", diaChi=" + diaChi +
+                ", soDienThoai=" + soDienThoai +
+                ", chucVu=" + (chucVu != null ? chucVu.getTenCV() : "null") +
+                ", luongNV=" + luongNV +
+                ", ngayVaoLam=" + ngayVaoLam +
+                ", gioiTinh=" + gioiTinh +
+                ", caLamViec=" + (caLamViec != null ? caLamViec.getTenCa() : "null") +
+                ", taiKhoan=" + (taiKhoan != null ? taiKhoan.getUsername() : "null") +
+                "]";
+    }
+
+    // equals & hashCode dựa trên maNhanVien
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof NhanVien)) return false;
+        NhanVien nv = (NhanVien) o;
+        return Objects.equals(maNhanVien, nv.maNhanVien);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(maNhanVien);
     }
 }

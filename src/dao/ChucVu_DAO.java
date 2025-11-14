@@ -11,7 +11,13 @@ public class ChucVu_DAO {
     private Connection con;
 
     public ChucVu_DAO() {
-        con = ConnectDB.getInstance().getConnection();
+    	 try {
+             con = ConnectDB.getInstance().getConnection();
+         } catch (SQLException e) {
+             e.printStackTrace();
+             // Nếu muốn dừng chương trình ngay khi kết nối lỗi:
+             // throw new RuntimeException(e);
+         }
     }
 
     // ---------------- LẤY TOÀN BỘ CHỨC VỤ ----------------

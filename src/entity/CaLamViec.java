@@ -7,17 +7,23 @@ public class CaLamViec {
     private String tenCa;
     private LocalTime gioBatDau;
     private LocalTime gioKetThuc;
+    private double tienMoCa;
+    private double tienDongCa;
+    private NhanVien nhanVien;
 
     public CaLamViec() {
         super();
     }
 
-    public CaLamViec(String maCa, String tenCa, LocalTime gioBatDau, LocalTime gioKetThuc) {
+    public CaLamViec(String maCa, String tenCa, LocalTime gioBatDau, LocalTime gioKetThuc , double tienMoCa , double tienDongCa , NhanVien nhanVien) {
         super();
         setMaCa(maCa);
         setTenCa(tenCa);
         setGioBatDau(gioBatDau);
         setGioKetThuc(gioKetThuc);
+        setTienMoCa(tienMoCa);
+        setTienDongCa(tienDongCa);
+        setNhanVien(nhanVien);
     }
 
     public String getMaCa() {
@@ -61,9 +67,42 @@ public class CaLamViec {
             throw new IllegalArgumentException("Giờ kết thúc phải sau giờ bắt đầu!");
         this.gioKetThuc = gioKetThuc;
     }
+    
 
-    @Override
-    public String toString() {
-        return "CaLamViec [maCa=" + maCa + ", tenCa=" + tenCa + ", gioBatDau=" + gioBatDau + ", gioKetThuc=" + gioKetThuc + "]";
-    }
+    public double getTienMoCa() {
+		return tienMoCa;
+	}
+
+	public void setTienMoCa(double tienMoCa) {
+		this.tienMoCa = tienMoCa;
+	}
+
+	public double getTienDongCa() {
+		return tienDongCa;
+	}
+
+	public void setTienDongCa(double tienDongCa) {
+		this.tienDongCa = tienDongCa;
+	}
+	
+
+	public NhanVien getNhanVien() {
+		return nhanVien;
+	}
+
+	public void setNhanVien(NhanVien nhanVien) {
+		this.nhanVien = nhanVien;
+	}
+
+	@Override
+	public String toString() {
+		return "CaLamViec [maCa=" + maCa + ", tenCa=" + tenCa + ", gioBatDau=" + gioBatDau + ", gioKetThuc="
+				+ gioKetThuc + ", tienMoCa=" + tienMoCa + ", tienDongCa=" + tienDongCa + ", nhanVien=" + nhanVien + "]";
+	}
+	
+	
+
+	
+
+	
 }
