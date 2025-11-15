@@ -1,37 +1,20 @@
 package entity;
 
-import java.time.LocalDate;
-
 public class NhanVien {
     private String maNhanVien;
     private String tenNhanVien;
     private int tuoi;
     private String diaChi;
     private String soDienThoai;
-    private ChucVu chucVu;
-    private float luongNV;
-    private LocalDate ngayVaoLam;
-    private String gioiTinh;
-    private CaLamViec caLamViec;
+    private TaiKhoan taiKhoan;
 
-    public NhanVien() {
-        super();
-    }
-
-    public NhanVien(String maNhanVien, String tenNhanVien, int tuoi, String diaChi,
-                    String soDienThoai, ChucVu chucVu, float luongNV,
-                    LocalDate ngayVaoLam, String gioiTinh, CaLamViec caLamViec) {
-        super();
-        setMaNhanVien(maNhanVien);
-        setTenNhanVien(tenNhanVien);
-        setTuoi(tuoi);
-        setDiaChi(diaChi);
-        setSoDienThoai(soDienThoai);
-        setChucVu(chucVu);
-        setLuongNV(luongNV);
-        setNgayVaoLam(ngayVaoLam);
-        setGioiTinh(gioiTinh);
-        setCaLamViec(caLamViec);
+    public NhanVien(String maNhanVien, String tenNhanVien, int tuoi, String diaChi, String soDienThoai, TaiKhoan taiKhoan) {
+        this.maNhanVien = maNhanVien;
+        this.tenNhanVien = tenNhanVien;
+        this.tuoi = tuoi;
+        this.diaChi = diaChi;
+        this.soDienThoai = soDienThoai;
+        this.taiKhoan = taiKhoan;
     }
 
     public String getMaNhanVien() {
@@ -39,8 +22,9 @@ public class NhanVien {
     }
 
     public void setMaNhanVien(String maNhanVien) {
-        if (maNhanVien == null || maNhanVien.trim().isEmpty())
-            throw new IllegalArgumentException("Mã nhân viên không được để trống!");
+        if (maNhanVien == null || maNhanVien.isEmpty()) {
+            throw new IllegalArgumentException("Mã nhân viên không được để trống");
+        }
         this.maNhanVien = maNhanVien;
     }
 
@@ -49,8 +33,9 @@ public class NhanVien {
     }
 
     public void setTenNhanVien(String tenNhanVien) {
-        if (tenNhanVien == null || tenNhanVien.trim().isEmpty())
-            throw new IllegalArgumentException("Tên nhân viên không được để trống!");
+        if (tenNhanVien == null || tenNhanVien.isEmpty()) {
+            throw new IllegalArgumentException("Tên nhân viên không được để trống");
+        }
         this.tenNhanVien = tenNhanVien;
     }
 
@@ -59,8 +44,9 @@ public class NhanVien {
     }
 
     public void setTuoi(int tuoi) {
-        if (tuoi < 18 || tuoi > 60)
-            throw new IllegalArgumentException("Tuổi nhân viên phải từ 18 đến 60!");
+        if ( tuoi < 18 || tuoi > 60) {
+            throw new IllegalArgumentException("Tuổi không hợp lệ. Tuổi phải từ 18 đến 60");
+        }
         this.tuoi = tuoi;
     }
 
@@ -69,8 +55,9 @@ public class NhanVien {
     }
 
     public void setDiaChi(String diaChi) {
-        if (diaChi == null || diaChi.trim().isEmpty())
-            throw new IllegalArgumentException("Địa chỉ không được để trống!");
+        if (diaChi == null || diaChi.isEmpty()) {
+            throw new IllegalArgumentException("Địa chỉ không được để trống");
+        }
         this.diaChi = diaChi;
     }
 
@@ -79,68 +66,33 @@ public class NhanVien {
     }
 
     public void setSoDienThoai(String soDienThoai) {
-        if (!soDienThoai.matches("^0\\d{9,10}$"))
-            throw new IllegalArgumentException("Số điện thoại không hợp lệ!");
+        if (soDienThoai == null || soDienThoai.isEmpty()) {
+            throw new IllegalArgumentException("Số điện thoại không được để trống");
+        }
         this.soDienThoai = soDienThoai;
     }
 
-    public ChucVu getChucVu() {
-        return chucVu;
+    public TaiKhoan getTaiKhoan() {
+        return taiKhoan;
     }
 
-    public void setChucVu(ChucVu chucVu) {
-        if (chucVu == null)
-            throw new IllegalArgumentException("Chức vụ không được null!");
-        this.chucVu = chucVu;
+    public void setTaiKhoan(TaiKhoan taiKhoan) {
+        if (taiKhoan == null) {
+            throw new IllegalArgumentException("Tài khoản không được để trống");
+        }
+        this.taiKhoan = taiKhoan;
     }
 
-    public float getLuongNV() {
-        return luongNV;
-    }
-
-    public void setLuongNV(float luongNV) {
-        if (luongNV < 0)
-            throw new IllegalArgumentException("Lương không được âm!");
-        this.luongNV = luongNV;
-    }
-
-    public LocalDate getNgayVaoLam() {
-        return ngayVaoLam;
-    }
-
-    public void setNgayVaoLam(LocalDate ngayVaoLam) {
-        if (ngayVaoLam == null)
-            throw new IllegalArgumentException("Ngày vào làm không được để trống!");
-        this.ngayVaoLam = ngayVaoLam;
-    }
-
-    public String getGioiTinh() {
-        return gioiTinh;
-    }
-
-    public void setGioiTinh(String gioiTinh) {
-        if (!gioiTinh.equalsIgnoreCase("Nam") && !gioiTinh.equalsIgnoreCase("Nữ"))
-            throw new IllegalArgumentException("Giới tính phải là Nam hoặc Nữ!");
-        this.gioiTinh = gioiTinh;
-    }
-
-    public CaLamViec getCaLamViec() {
-        return caLamViec;
-    }
-
-    public void setCaLamViec(CaLamViec caLamViec) {
-        if (caLamViec == null)
-            throw new IllegalArgumentException("Ca làm việc không được null!");
-        this.caLamViec = caLamViec;
-    }
 
     @Override
     public String toString() {
-        return "NhanVien [maNhanVien=" + maNhanVien + ", tenNhanVien=" + tenNhanVien
-                + ", tuoi=" + tuoi + ", diaChi=" + diaChi + ", soDienThoai=" + soDienThoai
-                + ", chucVu=" + (chucVu != null ? chucVu.getTenCV() : "null")
-                + ", luongNV=" + luongNV + ", ngayVaoLam=" + ngayVaoLam
-                + ", gioiTinh=" + gioiTinh
-                + ", caLamViec=" + (caLamViec != null ? caLamViec.getTenCa() : "null") + "]";
+        return "HoaDon{" +
+                "maNhanVien='" + maNhanVien + '\'' +
+                ", tenNhanVien='" + tenNhanVien + '\'' +
+                ", tuoi='" + tuoi + '\'' +
+                ", diaChi='" + diaChi + '\'' +
+                ", soDienThoai='" + soDienThoai + '\'' +
+                ", taiKhoan=" + taiKhoan +
+                '}';
     }
 }

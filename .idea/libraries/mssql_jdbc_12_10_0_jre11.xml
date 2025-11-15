@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="mssql-jdbc-12.10.0.jre11">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/mssql-jdbc-12.10.0.jre11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jcalendar-1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/itextpdf-5.5.13.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jcommon-1.0.23.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jfreechart-1.0.19.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
