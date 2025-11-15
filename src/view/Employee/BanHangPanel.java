@@ -1,42 +1,32 @@
 package view.Employee;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Image;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import controller.HoaDonController;
+import controller.UserController;
+import entity.LoaiSanPham;
+import entity.NhanVien;
+import entity.SanPham;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.math.BigDecimal;
+import java.io.FileOutputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
-import controller.HoaDonController;
 import controller.SanPhamController;
-import controller.UserController;
-import entity.LoaiSanPham;
-import entity.NhanVien;
-import entity.SanPham;
 
 public class BanHangPanel extends JPanel implements MouseListener, ActionListener {
     private final JPanel mainPanel;
@@ -54,6 +44,9 @@ public class BanHangPanel extends JPanel implements MouseListener, ActionListene
     private JPanel cardPanel;
 
     private Map<SanPham, Integer> cartItems;
+    
+    private JComboBox<String> cboPhuongThucThanhToan;
+
 
     /**
      * Constructor của panel bán hàng
@@ -111,6 +104,13 @@ public class BanHangPanel extends JPanel implements MouseListener, ActionListene
         panel.add(scrollPane, BorderLayout.CENTER);
 
         JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel westPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        
+        cboPhuongThucThanhToan = new JComboBox<>();
+        cboPhuongThucThanhToan.addItem("Tiền mặt");
+        cboPhuongThucThanhToan.addItem("Chuyển khoản");
+        cboPhuongThucThanhToan.setPreferredSize(new Dimension(100, 25));
+        westPanel.add(cboPhuongThucThanhToan);
 
         btnThanhToan = new JButton("THANH TOÁN");
         btnThanhToan.setPreferredSize(new Dimension(200, 35));
@@ -119,7 +119,7 @@ public class BanHangPanel extends JPanel implements MouseListener, ActionListene
         southPanel.add(btnThanhToan);
 
         panel.add(southPanel, BorderLayout.SOUTH);
-
+        panel.add(westPanel, BorderLayout.WEST);
         return panel;
     }
 
@@ -135,27 +135,12 @@ public class BanHangPanel extends JPanel implements MouseListener, ActionListene
     }
 
     private void updateTotalInfo() {
-        // Tổng số lượng (cái này đúng)
-        int tongSoLuong = cartItems.values().stream()
-                .mapToInt(Integer::intValue)
-                .sum();
-
-        // Tổng tiền (dùng BigDecimal)
-        BigDecimal tongTienBD = cartItems.entrySet().stream()
-                .map(entry -> {
-                    BigDecimal giaBan = entry.getKey().getGiaBan();  // BigDecimal
-                    Integer soLuong = entry.getValue();           // Integer
-                    return giaBan.multiply(BigDecimal.valueOf(soLuong));
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        // Convert sang double nếu label của bạn nhận double
-        double tongTien = tongTienBD.doubleValue();
+        int tongSoLuong = cartItems.values().stream().mapToInt(Integer::intValue).sum();
+        double tongTien = cartItems.entrySet().stream().mapToDouble(entry -> entry.getKey().getGiaBan() * entry.getValue()).sum();
 
         lblSoLuongValue.setText(String.valueOf(tongSoLuong));
         lblTienValue.setText(tongTien + " VND");
     }
-
 
     private void updateCartPanel(){
         JScrollPane scrollPane = (JScrollPane) cardPanel.getComponent(1);
@@ -163,24 +148,42 @@ public class BanHangPanel extends JPanel implements MouseListener, ActionListene
             JPanel centerPanel = (JPanel) scrollPane.getViewport().getView();
             centerPanel.removeAll();
 
-            centerPanel.setLayout(new GridLayout(30, 1,0,5));
+            centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
 
             for (Map.Entry<SanPham, Integer> entry : cartItems.entrySet()) {
                 JPanel itemPanel = new JPanel();
-                itemPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-
+                itemPanel.setLayout(new BoxLayout(itemPanel, BoxLayout.X_AXIS)); 
+                itemPanel.setMaximumSize(new Dimension(450, 50)); 
+                
                 JLabel lblTenMon = new JLabel("" + entry.getKey().getTenSanPham());
-                lblTenMon.setFont(new Font("Arial", Font.PLAIN, 12));
+                lblTenMon.setFont(new Font("Arial", Font.PLAIN, 13));
+                lblTenMon.setPreferredSize(new Dimension(150, 25));
 
                 JLabel lblSoLuong = new JLabel("" + entry.getValue());
-                lblSoLuong.setFont(new Font("Arial", Font.PLAIN, 12));
+                lblSoLuong.setFont(new Font("Arial", Font.PLAIN, 13));
+                lblSoLuong.setPreferredSize(new Dimension(40, 25));
 
                 JLabel lblGia = new JLabel("" + entry.getKey().getGiaBan() + " VND");
-                lblGia.setFont(new Font("Arial", Font.PLAIN, 12));
+                lblGia.setFont(new Font("Arial", Font.PLAIN, 13));
+                lblGia.setPreferredSize(new Dimension(90, 25));
+                
+                JButton btnGiam = new JButton("-");
+                btnGiam.setPreferredSize(new Dimension(40,25));
+                btnGiam.addActionListener(ev -> {
+                	int current = cartItems.get(entry.getKey());
+                	if (current > 1) {
+                		cartItems.put(entry.getKey(), current - 1);
+                	}else {
+                		cartItems.remove(entry.getKey());
+                	}
+                		updateCartPanel();
+                		updateTotalInfo();
+                });
 
                 itemPanel.add(lblTenMon);
                 itemPanel.add(lblSoLuong);
                 itemPanel.add(lblGia);
+                itemPanel.add(btnGiam);
 
                 centerPanel.add(itemPanel);
         }
@@ -281,7 +284,68 @@ public class BanHangPanel extends JPanel implements MouseListener, ActionListene
         return cardWrapper;
     }
 
- 
+    private void xuatHoaDonPDF(String maHoaDon, LocalDateTime ngayLap, String tenNhanVien, double tongTien) {
+        try {
+            String directory = "HoaDonPDF";
+            java.nio.file.Path dirPath = java.nio.file.Paths.get(directory);
+            if (!java.nio.file.Files.exists(dirPath)) {
+                java.nio.file.Files.createDirectories(dirPath);
+            }
+
+            String filename = directory + "/HoaDon_" + maHoaDon + ".pdf";
+
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(filename));
+            document.open();
+
+            String fontPath = "fonts/arial.ttf";
+            BaseFont unicodeFont = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            com.itextpdf.text.Font fontTieuDe = new com.itextpdf.text.Font(unicodeFont, 16, com.itextpdf.text.Font.BOLD);
+            com.itextpdf.text.Font fontNormal = new com.itextpdf.text.Font(unicodeFont, 12);
+            com.itextpdf.text.Font fontTableHeader = new com.itextpdf.text.Font(unicodeFont, 12, com.itextpdf.text.Font.BOLD); // Font cho header bảng
+
+            Paragraph tieuDe = new Paragraph("Hóa Đơn Bán Hàng", fontTieuDe);
+            tieuDe.setAlignment(Element.ALIGN_CENTER);
+            document.add(tieuDe);
+
+            document.add(new Paragraph("Mã Hóa Đơn: " + maHoaDon, fontNormal));
+            document.add(new Paragraph("Ngày Lập:  " + ngayLap, fontNormal));
+            document.add(new Paragraph("Nhân viên: " + tenNhanVien, fontNormal));
+            document.add(new Paragraph("------------------------------------------------------"));
+
+            PdfPTable table = new PdfPTable(4);
+            table.setWidthPercentage(100);
+
+            table.addCell(new com.itextpdf.text.Phrase("Tên Sản Phẩm", fontTableHeader));
+            table.addCell(new com.itextpdf.text.Phrase("Số Lượng", fontTableHeader));
+            table.addCell(new com.itextpdf.text.Phrase("Đơn Giá", fontTableHeader));
+            table.addCell(new com.itextpdf.text.Phrase("Thành Tiền", fontTableHeader));
+
+            // Use cartItems to populate the table
+            for (Map.Entry<SanPham, Integer> entry : cartItems.entrySet()) {
+                SanPham sp = entry.getKey();
+                int soLuong = entry.getValue();
+                double thanhTien = sp.getGiaBan() * soLuong;
+
+                table.addCell(new com.itextpdf.text.Phrase(sp.getTenSanPham(), fontNormal));
+                table.addCell(new com.itextpdf.text.Phrase(String.valueOf(soLuong), fontNormal));
+                table.addCell(new com.itextpdf.text.Phrase(String.valueOf(sp.getGiaBan() + " VNĐ"), fontNormal));
+                table.addCell(new com.itextpdf.text.Phrase(String.valueOf(thanhTien), fontNormal));
+            }
+
+            document.add(table);
+
+            document.add(new Paragraph("------------------------------------------------------"));
+            document.add(new Paragraph("Tổng Tiền: " + tongTien, fontNormal));
+
+            document.close();
+
+            java.awt.Desktop.getDesktop().open(new java.io.File(filename));
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi xuất hóa đơn PDF");
+        }
+    }
 
 
 
@@ -291,23 +355,18 @@ public class BanHangPanel extends JPanel implements MouseListener, ActionListene
 
         if (source.equals(btnThanhToan)) {
             try {
-        
+                double tongTien = 0;
                 List<SanPham> danhSachSanPham = new ArrayList<>();
-
-                BigDecimal tongTien = BigDecimal.ZERO;
 
                 for (Map.Entry<SanPham, Integer> entry : cartItems.entrySet()) {
                     SanPham sp = entry.getKey();
                     int soLuong = entry.getValue();
-
-                    // Tính thành tiền đúng chuẩn BigDecimal
-                    BigDecimal thanhTien = sp.getGiaBan().multiply(BigDecimal.valueOf(soLuong));
-                    tongTien = tongTien.add(thanhTien);
+                    double thanhTien = sp.getGiaBan() * soLuong;
+                    tongTien += thanhTien;
 
                     sp.setSoLuong(soLuong);
                     danhSachSanPham.add(sp);
                 }
-
 
                 String maHoaDon = hoaDonController.generateMaHoaDon();
                 NhanVien nhanVien = userController.getNhanVienByTenDangNhap(userController.getCurrentUsername());
@@ -328,25 +387,13 @@ public class BanHangPanel extends JPanel implements MouseListener, ActionListene
                     String maChiTietHoaDon = hoaDonController.generateMaChiTietHoaDon();
                     String maSanPham = sp.getMaSanPham();
                     int soLuong = sp.getSoLuong();
-                    BigDecimal donGia = sp.getGiaBan();
-
-                    // Tính thành tiền đúng chuẩn BigDecimal
-                    BigDecimal thanhTienSP = donGia.multiply(BigDecimal.valueOf(soLuong));
-
-                    // Nếu hàm insertChiTietHoaDon dùng BigDecimal
-                    if (!hoaDonController.insertChiTietHoaDon(
-                            maChiTietHoaDon,
-                            maHoaDon,
-                            maSanPham,
-                            soLuong,
-                            donGia,
-                            thanhTienSP
-                    )) {
+                    double donGia = sp.getGiaBan();
+                    double thanhTienSP = soLuong * donGia;
+                    if (!hoaDonController.insertChiTietHoaDon(maChiTietHoaDon, maHoaDon, maSanPham, soLuong, donGia, thanhTienSP)) {
                         chiTietHoaDonInsert = false;
                         break;
                     }
                 }
-
 
                 if (chiTietHoaDonInsert) {
                     JOptionPane.showMessageDialog(this, "Thanh toán thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
@@ -369,12 +416,7 @@ public class BanHangPanel extends JPanel implements MouseListener, ActionListene
         }
     }
 
-    private void xuatHoaDonPDF(String maHoaDon, LocalDateTime ngayLap, String tenNhanVien, BigDecimal tongTien) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
+    @Override
     public void mouseClicked(MouseEvent e) {
 
     }
@@ -407,3 +449,5 @@ public class BanHangPanel extends JPanel implements MouseListener, ActionListene
 
     }
 }
+
+

@@ -1,167 +1,54 @@
 package dao;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import connectDB.ConnectDB;
+import connectDB.ConnectDataBase;
 import entity.NhanVien;
-import entity.ChucVu;
-import entity.CaLamViec;
 import entity.TaiKhoan;
 
-public class NhanVien_DAO {
-    private Connection con;
+import java.sql.*;
 
-    public NhanVien_DAO() {
-        try {
-            con = ConnectDB.getInstance().getConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+public class NhanVien_Dao {
 
-    public List<NhanVien> layTatCa() {
-        List<NhanVien> ds = new ArrayList<>();
-        String sql = "SELECT * FROM NhanVien";
-        try (Statement stm = con.createStatement();
-             ResultSet rs = stm.executeQuery(sql)) {
-
-            while (rs.next()) {
-                ChucVu chucVu = new ChucVu(rs.getString("maCV"), null, 0);
-                CaLamViec caLamViec = new CaLamViec(rs.getString("maCa"), null, null, null, 0, 0, null);
-                
-                NhanVien nv = new NhanVien(
-                    rs.getString("maNhanVien"),
-                    rs.getString("tenNhanVien"),
-                    rs.getInt("tuoi"),
-                    rs.getString("diaChi"),
-                    rs.getString("soDienThoai"),
-                    chucVu,
-                    rs.getFloat("luongNV"),
-                    rs.getDate("ngayVaoLam").toLocalDate(),
-                    rs.getString("gioiTinh"),
-                    caLamViec,
-                    null
-                );
-                ds.add(nv);
+                public NhanVien getNhanVienByTenDangNhap(String tenDangNhap) {
+            try {
+                Connection conn = ConnectDataBase.getConnection();
+                String sql = "SELECT * FROM NhanVien "
+                           + "INNER JOIN TaiKhoan ON NhanVien.tenDangNhap = TaiKhoan.tenDangNhap "
+                           + "WHERE TaiKhoan.tenDangNhap = ?";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setString(1, tenDangNhap);
+                ResultSet rs = stmt.executeQuery();
+        
+                if (rs.next()) {
+                    String maNV = rs.getString("maNhanVien");
+                    String tenNV = rs.getString("tenNhanVien");
+                    int tuoi = rs.getInt("tuoi");
+                    String diaChi = rs.getString("diaChi");
+                    String sdt = rs.getString("soDienThoai");
+                    String tenDangNhapNV = rs.getString("tenDangNhap");
+                    String matKhau = rs.getString("matKhau");
+                    boolean quyenHan = rs.getBoolean("quyen");
+        
+                    TaiKhoan taiKhoan = new TaiKhoan(tenDangNhapNV, matKhau, quyenHan);
+                    return new NhanVien(maNV, tenNV, tuoi, diaChi, sdt, taiKhoan);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            return null; // Trả về null nếu không tìm thấy
         }
-        return ds;
-    }
 
-    public boolean themNhanVien(NhanVien nv) {
-        String sql = "INSERT INTO NhanVien (maNhanVien, tenNhanVien, tuoi, diaChi, soDienThoai, maCV, luongNV, ngayVaoLam, gioiTinh, maCa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement pstm = con.prepareStatement(sql)) {
-            pstm.setString(1, nv.getMaNhanVien());
-            pstm.setString(2, nv.getTenNhanVien());
-            pstm.setInt(3, nv.getTuoi());
-            pstm.setString(4, nv.getDiaChi());
-            pstm.setString(5, nv.getSoDienThoai());
-            pstm.setString(6, nv.getChucVu().getMaCV());
-            pstm.setFloat(7, nv.getLuongNV());
-            pstm.setDate(8, Date.valueOf(nv.getNgayVaoLam()));
-            pstm.setString(9, nv.getGioiTinh());
-            pstm.setString(10, nv.getCaLamViec().getMaCa());
-
-            return pstm.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public boolean capNhatNhanVien(NhanVien nv) {
-        String sql = "UPDATE NhanVien SET tenNhanVien=?, tuoi=?, diaChi=?, soDienThoai=?, maCV=?, luongNV=?, ngayVaoLam=?, gioiTinh=?, maCa=? WHERE maNhanVien=?";
-        try (PreparedStatement pstm = con.prepareStatement(sql)) {
-            pstm.setString(1, nv.getTenNhanVien());
-            pstm.setInt(2, nv.getTuoi());
-            pstm.setString(3, nv.getDiaChi());
-            pstm.setString(4, nv.getSoDienThoai());
-            pstm.setString(5, nv.getChucVu().getMaCV());
-            pstm.setFloat(6, nv.getLuongNV());
-            pstm.setDate(7, Date.valueOf(nv.getNgayVaoLam()));
-            pstm.setString(8, nv.getGioiTinh());
-            pstm.setString(9, nv.getCaLamViec().getMaCa());
-            pstm.setString(10, nv.getMaNhanVien());
-
-            return pstm.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public NhanVien timTheoMa(String maNV) {
-        String sql = "SELECT * FROM NhanVien WHERE maNhanVien=?";
-        try (PreparedStatement pstm = con.prepareStatement(sql)) {
-            pstm.setString(1, maNV);
-            ResultSet rs = pstm.executeQuery();
+    public boolean isMaNhanVienExists(String maNhanVien) {
+        String sql = "SELECT COUNT(*) FROM NhanVien WHERE maNhanVien = ?";
+        try (Connection conn = ConnectDataBase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, maNhanVien);
+            ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                ChucVu chucVu = new ChucVu(rs.getString("maCV"), null, 0);
-                CaLamViec caLamViec = new CaLamViec(rs.getString("maCa"), null, null, null, 0, 0, null);
-                
-                return new NhanVien(
-                    rs.getString("maNhanVien"),
-                    rs.getString("tenNhanVien"),
-                    rs.getInt("tuoi"),
-                    rs.getString("diaChi"),
-                    rs.getString("soDienThoai"),
-                    chucVu,
-                    rs.getFloat("luongNV"),
-                    rs.getDate("ngayVaoLam").toLocalDate(),
-                    rs.getString("gioiTinh"),
-                    caLamViec,
-                    null
-                );
+                return rs.getInt(1) > 0; // Trả về true nếu mã nhân viên đã tồn tại
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
-    }
-
-    public List<NhanVien> timTheoTen(String tenNhanVien) {
-        List<NhanVien> dsNV = new ArrayList<>();
-        String sql = "SELECT * FROM NhanVien WHERE tenNhanVien LIKE ?";
-        try (PreparedStatement pstm = con.prepareStatement(sql)) {
-            pstm.setString(1, "%" + tenNhanVien + "%");
-            ResultSet rs = pstm.executeQuery();
-            while (rs.next()) {
-                ChucVu chucVu = new ChucVu(rs.getString("maCV"), null, 0);
-                CaLamViec caLamViec = new CaLamViec(rs.getString("maCa"), null, null, null, 0, 0, null);
-                
-                NhanVien nv = new NhanVien(
-                    rs.getString("maNhanVien"),
-                    rs.getString("tenNhanVien"),
-                    rs.getInt("tuoi"),
-                    rs.getString("diaChi"),
-                    rs.getString("soDienThoai"),
-                    chucVu,
-                    rs.getFloat("luongNV"),
-                    rs.getDate("ngayVaoLam").toLocalDate(),
-                    rs.getString("gioiTinh"),
-                    caLamViec,
-                    null
-                );
-                dsNV.add(nv);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return dsNV;
-    }
-
-    public boolean xoaNhanVien(String maNhanVien) {
-        String sql = "DELETE FROM NhanVien WHERE maNhanVien=?";
-        try (PreparedStatement pstm = con.prepareStatement(sql)) {
-            pstm.setString(1, maNhanVien);
-            return pstm.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+        return false;
     }
 }

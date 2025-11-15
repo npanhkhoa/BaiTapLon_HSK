@@ -1,7 +1,8 @@
 package view.Manager;
 
 import controller.HoaDonController;
-import gui.MainFrame;
+import view.Employee.ThongTinPanel;
+import view.login.fLogin;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,10 +34,10 @@ public class Manager_GUI {
 
         // Thêm các panel tương ứng vào mainPanel
         mainPanel.add(new SanPhamPanel(), "PRODUCT");
-        mainPanel.add(new ThongKe_GUI(hoaDonController), "THONG_KE");
-  //      mainPanel.add(new PhieuNhapFrame(), "PHIEU_NHAP");
-  //      mainPanel.add(new KhoPanel(), "KHO");
- //       mainPanel.add(new TaiKhoanFrame(), "ACCOUNT");
+        mainPanel.add(new ThongKeFrame(hoaDonController), "THONG_KE");
+        mainPanel.add(new PhieuNhapFrame(), "PHIEU_NHAP");
+        mainPanel.add(new KhoPanel(), "KHO");
+        mainPanel.add(new TaiKhoanFrame(), "ACCOUNT");
 
         frame.add(mainPanel, BorderLayout.CENTER);
         frame.setVisible(true);
@@ -120,7 +121,7 @@ public class Manager_GUI {
         );
         if (confirm == JOptionPane.YES_OPTION) {
             frame.dispose(); // Đóng cửa sổ hiện tại
-            new MainFrame();
+            new fLogin();
         }
     }
 

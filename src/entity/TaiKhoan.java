@@ -54,9 +54,4 @@ public class TaiKhoan {
                 ", matKhau='" + matKhau + '\'' +
                 '}';
     }
-
-	public String getUsername() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

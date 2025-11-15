@@ -1,21 +1,24 @@
 package controller;
 
+import connectDB.ConnectDataBase;
+import dao.CaLamViec_DAO;
+import dao.NhanVien_Dao;
+import dao.TaiKhoan_DAO;
+import entity.CaLamViec;
+import entity.NhanVien;
+import entity.TaiKhoan;
+
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.List;
 import java.util.Random;
 
-import connectDB.ConnectDB;
-import dao.CaLamViec_DAO;
-import dao.NhanVien_DAO;
-import entity.CaLamViec;
-import entity.NhanVien;
-
 public class UserController {
-    private NhanVien_DAO nhanVienDao = new NhanVien_DAO();
+    private NhanVien_Dao nhanVienDao = new NhanVien_Dao();
     private CaLamViec_DAO caLamViecDao = new CaLamViec_DAO();
 
     private String currentUsername;
@@ -30,7 +33,7 @@ public class UserController {
     public boolean checkLogin(String tenDangNhap, String matKhau) {
         String sql = "SELECT COUNT(*) FROM [dbo].[TaiKhoan] WHERE tenDangNhap = ? AND matKhau = ?";
 
-        try (Connection conn = ConnectDB.getConnection();
+        try (Connection conn = ConnectDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, tenDangNhap);
@@ -57,7 +60,7 @@ public class UserController {
     public boolean checkAdmin(String username, String password) {
         String sql = "SELECT COUNT(*) FROM [dbo].[TaiKhoan] WHERE tenDangNhap = ? AND matKhau = ? AND quyen = 1";
 
-        try (Connection conn = ConnectDB.getConnection();
+        try (Connection conn = ConnectDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, username);
@@ -126,12 +129,12 @@ public class UserController {
 
         // Tạo ca làm việc
         CaLamViec caLamViec = new CaLamViec();
-        caLamViec.setMaCa(maCaLamViec);
+        caLamViec.setMaCaLamViec(maCaLamViec);
         caLamViec.setNhanVien(nhanVien);
-        caLamViec.setGioBatDau(LocalTime.now()); // Thời gian bắt đầu là thời điểm hiện tại
-        caLamViec.setGioKetThuc(LocalTime.now()); // Thời gian kết thúc là thời điểm hiện tại
+        caLamViec.setThoiGianBatDau(LocalDateTime.now()); // Thời gian bắt đầu là thời điểm hiện tại
+        caLamViec.setThoiGianKetThuc(LocalDateTime.now()); // Thời gian kết thúc là thời điểm hiện tại
         caLamViec.setTienMoCa(tienMoCa);
-        caLamViec.setTienDongCa(0); // Số tiền đóng ca mặc định là 0
+        caLamViec.setTienDongCa(0.0); // Số tiền đóng ca mặc định là 0
         return caLamViec;
     }
 
@@ -142,9 +145,8 @@ public class UserController {
      * @return true nếu lưu thành công, false nếu không.
      */
     public boolean saveShift(CaLamViec caLamViec) {
-        return caLamViecDao.themCaLamViec(caLamViec);
+        return caLamViecDao.insertCaLamViec(caLamViec);
     }
-
 
     /**
      * Phương thức này đóng ca làm việc.
@@ -153,15 +155,14 @@ public class UserController {
      * @return true nếu đóng ca thành công, false nếu không.
      */
     public boolean closeShift(CaLamViec caLamViec, double tienDongCa) {
-        if (caLamViec == null || caLamViec.getMaCa() == null || caLamViec.getMaCa().isEmpty()) {
+        if (caLamViec == null || caLamViec.getMaCaLamViec() == null || caLamViec.getMaCaLamViec().isEmpty()) {
             throw new IllegalArgumentException("Ca làm việc không hợp lệ hoặc thiếu mã ca làm việc.");
         }
 
-        caLamViec.setGioKetThuc(LocalTime.now()); // Thời gian kết thúc
-        caLamViec.setTienDongCa(tienDongCa);       // Số tiền đóng ca
-        return caLamViecDao.capNhatCaLamViec(caLamViec); // Cập nhật DB qua DAO
+        caLamViec.setThoiGianKetThuc(LocalDateTime.now()); // Thời gian kết thúc là thời gian hiện tại
+        caLamViec.setTienDongCa(tienDongCa); // Số tiền đóng ca
+        return caLamViecDao.updateCaLamViec(caLamViec); // Gọi DAO để cập nhật thông tin ca làm việc
     }
-
 
     /**
      * Phương thức này lấy thông tin nhân viên theo tên đăng nhập.

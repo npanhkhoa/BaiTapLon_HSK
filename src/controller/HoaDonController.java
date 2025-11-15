@@ -1,22 +1,21 @@
 package controller;
 
-import java.math.BigDecimal;
+import dao.HoaDon_Dao;
+import dao.SanPham_Dao;
+import entity.HoaDon;
+import entity.SanPham;
+
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import dao.HoaDon_DAO;
-import dao.SanPham_DAO;
-import entity.HoaDon;
-import entity.SanPham;
-
 public class HoaDonController {
-    private SanPham_DAO sanPhamDao = new SanPham_DAO();
+    private SanPham_Dao sanPhamDao = new SanPham_Dao();
     private SanPham sanPham = new SanPham();
-    private HoaDon_DAO hoaDonDao = new HoaDon_DAO();
+    private HoaDon_Dao hoaDonDao = new HoaDon_Dao();
     private UserController userController = new UserController();
 
 
@@ -49,9 +48,8 @@ public class HoaDonController {
      * @param
      * @return
      */
-    public boolean insertHoaDon(String maHoaDon, String maNhanVien, LocalDate ngayLap, double tongTien ,String maPTTT,String maKhachHang, 
-		      String maKM, int trangThaiThanhToan , String ghiChu) {
-        return HoaDon.insertHoaDon(maHoaDon, maNhanVien, ngayLap, tongTien);
+    public boolean insertHoaDon(String maHoaDon, String maNhanVien, LocalDateTime ngayLap, double tongTien) {
+        return hoaDonDao.insertHoaDon(maHoaDon, maNhanVien, ngayLap, tongTien);
     }
 
     /**
@@ -59,9 +57,8 @@ public class HoaDonController {
      * @param
      * @return
      */
-    public boolean insertChiTietHoaDon(String maChiTietHoaDon, String maHoaDon, String maSanPham, int soLuong, BigDecimal giaBan, BigDecimal thanhTien) {
-		return HoaDon.insertChiTietHoaDon(maChiTietHoaDon , maHoaDon , maSanPham , soLuong , giaBan , thanhTien);
-        
+    public boolean insertChiTietHoaDon(String maChiTietHoaDon, String maHoaDon, String maSanPham, int soLuong, double giaBan, double thanhTien) {
+        return hoaDonDao.insertChiTietHoaDon( maChiTietHoaDon, maHoaDon, maSanPham, soLuong, giaBan, thanhTien);
     }
 
     /**
@@ -77,33 +74,16 @@ public class HoaDonController {
         String maChiTietHoaDon;
         do {
             maChiTietHoaDon = "CTHD" + (1000 + new Random().nextInt(9000)); // Generate random ID in range CTHD1000-CTHD9999
-        } while (hoaDonDao.isMaHoaDonExists(maChiTietHoaDon)); // Check if it already exists
+        } while (hoaDonDao.isMaChiTietHoaDonExists(maChiTietHoaDon)); // Check if it already exists
         return maChiTietHoaDon;
     }
 
-    public Map<String, Integer> getTop8SanPhamBanChay(LocalTime startDate, LocalTime endDate) {
+    public Map<String, Integer> getTop8SanPhamBanChay(LocalDateTime startDate, LocalDateTime endDate) {
         return hoaDonDao.get8MonBanChayNhat(startDate, endDate);
     }
 
-    public Map<LocalDate, Double> getDoanhThuTheoThoiGian(LocalTime startDate, LocalTime endDate) {
+    public Map<LocalDate, Double> getDoanhThuTheoThoiGian(LocalDateTime startDate, LocalDateTime endDate) {
         return hoaDonDao.getDoanhThuTheoThoiGian(startDate, endDate);
     }
-
-	public boolean insertHoaDon(String maHoaDon, String maNhanVien, LocalDateTime ngayLap, BigDecimal tongTien) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public String getMatKhau() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public boolean isQuyenHan() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-
 
 }

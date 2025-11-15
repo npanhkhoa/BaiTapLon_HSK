@@ -1,23 +1,18 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-
-import connectDB.ConnectDB;
+import connectDB.ConnectDataBase;
 import entity.NhanVien;
 import entity.TaiKhoan;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TaiKhoan_DAO {
 
     public List<NhanVien> getAllThongTinTaiKhoan() {
         List<NhanVien> dsThongTinNhanVien = new ArrayList<>();
 
-        try (Connection conn = ConnectDB.getConnection();
+        try (Connection conn = ConnectDataBase.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(
                      "SELECT nv.maNhanVien, nv.tenNhanVien, nv.tuoi, nv.diaChi, "
@@ -36,7 +31,7 @@ public class TaiKhoan_DAO {
                 boolean quyen = rs.getBoolean(8);
 
                 TaiKhoan taiKhoan = new TaiKhoan(tenDangNhap, pw, quyen);
-                NhanVien nv = new NhanVien();
+                NhanVien nv = new NhanVien(maNV, tenNV, tuoi, diaChi, soDienThoai, taiKhoan);
                 dsThongTinNhanVien.add(nv);
             }
         } catch (SQLException e) {
@@ -52,7 +47,7 @@ public class TaiKhoan_DAO {
         boolean success = false;
 
         try {
-            conn = ConnectDB.getConnection();
+            conn = ConnectDataBase.getConnection();
             if (conn == null) return false;
 
             conn.setAutoCommit(false);
@@ -108,7 +103,7 @@ public class TaiKhoan_DAO {
     public List<TaiKhoan> printAllTaiKhoan() {
         List<TaiKhoan> dsTk = new ArrayList<>();
 
-        try (Connection conn = ConnectDB.getConnection();
+        try (Connection conn = ConnectDataBase.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery("SELECT tenDangNhap, matKhau, quyen FROM [dbo].[TaiKhoan]")) {
 
@@ -134,7 +129,7 @@ public class TaiKhoan_DAO {
         boolean success = false;
 
         try {
-            conn = ConnectDB.getConnection();
+            conn = ConnectDataBase.getConnection();
             if (conn == null) return false;
 
             conn.setAutoCommit(false);
@@ -184,7 +179,7 @@ public class TaiKhoan_DAO {
         boolean success = false;
 
         try {
-            conn = ConnectDB.getConnection();
+            conn = ConnectDataBase.getConnection();
             if (conn == null) return false;
 
             conn.setAutoCommit(false);
@@ -237,7 +232,7 @@ public class TaiKhoan_DAO {
     //tim kiem nhan vien
     public NhanVien searchTaiKhoan(String tenDangNhap) {
 
-        try (Connection conn = ConnectDB.getConnection();
+        try (Connection conn = ConnectDataBase.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
                      "SELECT nv.maNhanVien, nv.tenNhanVien, nv.tuoi, nv.diaChi, "
                              + "nv.soDienThoai, tk.tenDangNhap, tk.matKhau, tk.quyen "
@@ -259,7 +254,7 @@ public class TaiKhoan_DAO {
                 boolean quyen = rs.getBoolean(8);
 
                 TaiKhoan taiKhoan = new TaiKhoan(tenDangNhapResult, pw, quyen);
-                NhanVien nv = new NhanVien();
+                NhanVien nv = new NhanVien(maNV, tenNV, tuoi, diaChi, soDienThoai, taiKhoan);
                 return nv;
             }
         } catch (SQLException e) {

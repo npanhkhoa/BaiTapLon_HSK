@@ -1,26 +1,13 @@
 package view.Employee;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import controller.UserController;
+import entity.CaLamViec;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-
-import entity.CaLamViec;
 
 public class CaLamViecPanel extends JPanel implements ActionListener {
     private JTextField soTienField;
@@ -134,7 +121,7 @@ public interface ShiftListener {
                     return;
                 }
                 CaLamViec caLamViec = new CaLamViec();
-                caLamViec.setGioBatDau(LocalTime.now());
+                caLamViec.setThoiGianBatDau(LocalDateTime.now());
                 caLamViec.setTienMoCa(soTienMoCa);
 
                 if (shiftListener != null) {
@@ -149,4 +136,3 @@ public interface ShiftListener {
 
 
 }
-

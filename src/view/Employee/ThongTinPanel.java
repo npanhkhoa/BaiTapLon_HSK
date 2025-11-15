@@ -1,22 +1,10 @@
 package view.Employee;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-
-import javax.swing.ImageIcon;
-import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.SwingConstants;
-
 import controller.UserController;
 import entity.NhanVien;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class ThongTinPanel extends JPanel {
     private final UserController userController;

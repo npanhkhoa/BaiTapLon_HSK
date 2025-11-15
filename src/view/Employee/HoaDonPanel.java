@@ -1,28 +1,18 @@
+
 package view.Employee;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.math.BigDecimal;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.util.List;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableModel;
-
-import controller.HoaDonController;
 import controller.SanPhamController;
 import controller.UserController;
 import entity.HoaDon;
+import controller.HoaDonController;
 import entity.NhanVien;
 import entity.SanPham;
+
 
 public class HoaDonPanel extends JPanel {
     private DefaultTableModel tableModel;
@@ -126,10 +116,9 @@ public class HoaDonPanel extends JPanel {
                     .orElse("");
 
 
-            BigDecimal thanhTien = hd.getDsachSanPham().stream()
-                    .map(sp -> sp.getGiaBan().multiply(BigDecimal.valueOf(sp.getSoLuong())))
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-
+           double thanhTien = hd.getDsachSanPham().stream()
+                   .mapToDouble(sp -> sp.getGiaBan() * sp.getSoLuong())
+                   .sum();
 
            //Hiển thị đơn giá từng sản phẩm cách nhau bởi dấu ohaayr
             String donGia = hd.getDsachSanPham().stream()

@@ -1,130 +1,122 @@
 package entity;
 
-import java.math.BigDecimal;
-import java.util.Objects;
-
 public class SanPham {
-	private String maSanPham;
-	private String tenSanPham;
-	private BigDecimal giaBan;
-	private int soLuong;
-	private NhaCungCap nhaCungCap;
-	private String donViTinh;
-	
-	public SanPham() {
-		super();
-	}
+    private String maSanPham;
+    private String tenSanPham;
+    private double giaBan;
+    private int soLuong;
+    private LoaiSanPham loaiSanPham;
+    private String hinhAnh;
+    private NguyenLieu nguyenLieu;
 
-	public SanPham(String maSanPham, String tenSanPham, BigDecimal giaBan, int soLuong, NhaCungCap nhaCungCap,
-			String donViTinh) {
-		super();
-		this.maSanPham = maSanPham;
-		this.tenSanPham = tenSanPham;
-		this.giaBan = giaBan;
-		this.soLuong = soLuong;
-		this.nhaCungCap = nhaCungCap;
-		this.donViTinh = donViTinh;
-	}
+    public SanPham(String maSanPham, String tenSanPham, double giaBan, int soLuong, LoaiSanPham loaiSanPham, String hinhAnh) {
+        this.maSanPham = maSanPham;
+        this.tenSanPham = tenSanPham;
+        this.giaBan = giaBan;
+        this.soLuong = soLuong;
+        this.loaiSanPham = loaiSanPham;
+        this.hinhAnh = hinhAnh;
+    }
 
-	public String getMaSanPham() {
-		return maSanPham;
-	}
+    public SanPham(String maSanPham, String tenSanPham, double giaBan, int soLuong, LoaiSanPham loaiSanPham, String hinhAnh, NguyenLieu nguyenLieu) {
+        this.maSanPham = maSanPham;
+        this.tenSanPham = tenSanPham;
+        this.giaBan = giaBan;
+        this.soLuong = soLuong;
+        this.loaiSanPham = loaiSanPham;
+        this.hinhAnh = hinhAnh;
+        this.nguyenLieu = nguyenLieu;
+    }
 
-	public void setMaSanPham(String maSanPham) {
-		if (maSanPham == null || maSanPham.isEmpty())
-			throw new IllegalArgumentException("Mã sản phẩm không được bỏ trống");
-		if (!maSanPham.matches("^SP\\d{3}$")) {
-			throw new IllegalArgumentException("Mã sản phẩm phải theo dạng SPxxx");
-		}
-		this.maSanPham = maSanPham;
-	}
+    public SanPham() {
 
-	public String getTenSanPham() {
-		return tenSanPham;
-	}
+    }
 
-	public void setTenSanPham(String tenSanPham) {
-		if (tenSanPham == null || tenSanPham.isEmpty())
-			throw new IllegalArgumentException("Tên sản phẩm không được bỏ trống");
+    public String getMaSanPham() {
+        return maSanPham;
+    }
 
-		this.tenSanPham = tenSanPham;
-	}
+    public void setMaSanPham(String maSanPham) {
+        if (maSanPham == null || maSanPham.isEmpty()) {
+            throw new IllegalArgumentException("Mã sản phẩm không được để trống");
+        }
+        this.maSanPham = maSanPham;
+    }
 
-	public BigDecimal getGiaBan() {
-		return giaBan;
-	}
+    public String getTenSanPham() {
+        return tenSanPham;
+    }
 
-	public void setGiaBan(BigDecimal giaBan) {
-		if (giaBan.intValue() < 0)
-			throw new IllegalArgumentException("Giá sản phẩm phải lớn hơn bằng 0");
+    public void setTenSanPham(String tenSanPham) {
+        if (tenSanPham == null || tenSanPham.isEmpty()) {
+            throw new IllegalArgumentException("Tên sản phẩm không được để trống");
+        }
+        this.tenSanPham = tenSanPham;
+    }
 
-		this.giaBan = giaBan;
-	}
+    public double getGiaBan() {
+        return giaBan;
+    }
 
-	public int getSoLuong() {
-		return soLuong;
-	}
+    public void setGiaBan(double giaBan) {
+        if (giaBan < 0) {
+            throw new IllegalArgumentException("Giá bán không hợp lệ. Giá bán phải lớn hơn hoặc bằng 0");
+        }
+        this.giaBan = giaBan;
+    }
 
-	public void setSoLuong(int soLuong) {
-		this.soLuong = soLuong;
-	}
+    public int getSoLuong() {
+        return soLuong;
+    }
 
-	public NhaCungCap getNhaCungCap() {
-		return nhaCungCap;
-	}
+    public void setSoLuong(int soLuong) {
+        if (soLuong < 0) {
+            throw new IllegalArgumentException("Số lượng không hợp lệ. Số lượng phải lớn hơn hoặc bằng 0");
+        }
+        this.soLuong = soLuong;
+    }
 
-	public void setNhaCungCap(NhaCungCap nhaCungCap) {
-		this.nhaCungCap = nhaCungCap;
-	}
+    public LoaiSanPham getLoaiSanPham() {
+        return loaiSanPham;
+    }
 
-	public String getDonViTinh() {
-		return donViTinh;
-	}
+    public void setLoaiSanPham(LoaiSanPham loaiSanPham) {
+        if (loaiSanPham == null) {
+            throw new IllegalArgumentException("Loại sản phẩm không được để trống");
+        }
+        this.loaiSanPham = loaiSanPham;
+    }
 
-	public void setDonViTinh(String donViTinh) {
-		this.donViTinh = donViTinh;
-	}
+    public String getHinhAnh() {
+        return hinhAnh;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(maSanPham);
-	}
+    public void setHinhAnh(String hinhAnh) {
+        this.hinhAnh = hinhAnh;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SanPham other = (SanPham) obj;
-		return Objects.equals(maSanPham, other.maSanPham);
-	}
 
-	@Override
-	public String toString() {
-		return "SanPham [maSanPham=" + maSanPham + ", tenSanPham=" + tenSanPham + ", giaBan=" + giaBan + ", soLuong="
-				+ soLuong + ", nhaCungCap=" + nhaCungCap + ", donViTinh=" + donViTinh + "]";
-	}
+    public void addQuantity(int quantity) {
+        this.soLuong += quantity;
+    }
+    public NguyenLieu getNguyenLieu() {
+        return nguyenLieu;
+    }
 
-	public String getHinhAnh() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+    public void setNguyenLieu(NguyenLieu nguyenLieu) {
+        this.nguyenLieu = nguyenLieu;
+
+    }
+
+    @Override
+    public String toString() {
+        return "SanPham{" +
+                "maSanPham='" + maSanPham + '\'' +
+                ", tenSanPham='" + tenSanPham + '\'' +
+                ", giaBan=" + giaBan +
+                ", soLuong=" + soLuong +
+                ", loaiSanPham=" + loaiSanPham +
+                ", hinhAnh='" + hinhAnh + '\'' +
+                '}';
+    }
 }

@@ -1,164 +1,221 @@
 package dao;
 
+import connectDB.ConnectDataBase;
+import entity.LoaiSanPham;
+import entity.SanPham;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import connectDB.ConnectDB;
-import entity.SanPham;
-import entity.NhaCungCap;
-
-public class SanPham_DAO {
-    private Connection con;
-
-    public SanPham_DAO() {
-    	try {
-    		Connection con = ConnectDB.getInstance().getConnection();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            // Nếu muốn dừng chương trình ngay khi kết nối lỗi:
-            // throw new RuntimeException(e);
-        }
-    }
-
-    // ---------------- LẤY TOÀN BỘ SẢN PHẨM ----------------
-    public List<SanPham> layTatCa() {
-        List<SanPham> ds = new ArrayList<>();
-        String sql = "SELECT * FROM SanPham";
-        try (Statement stm = con.createStatement();
-             ResultSet rs = stm.executeQuery(sql)) {
-
-            while (rs.next()) {
-                NhaCungCap ncc = new NhaCungCap(rs.getString("maNCC"), null, null, null);
-                SanPham sp = new SanPham(
-                        rs.getString("maSanPham"),
-                        rs.getString("tenSanPham"),
-                        rs.getBigDecimal("giaBan"),
-                        rs.getInt("soLuong"),
-                        ncc,
-                        rs.getString("donViTinh")
-                );
-                ds.add(sp);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return ds;
-    }
-
-    // ---------------- THÊM SẢN PHẨM ----------------
-    public boolean themSanPham(SanPham sp) {
-        String sql = "INSERT INTO SanPham (maSanPham, tenSanPham, giaBan, soLuong, maNCC, donViTinh) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement pstm = con.prepareStatement(sql)) {
-            pstm.setString(1, sp.getMaSanPham());
-            pstm.setString(2, sp.getTenSanPham());
-            pstm.setBigDecimal(3, sp.getGiaBan());
-            pstm.setInt(4, sp.getSoLuong());
-            pstm.setString(5, sp.getNhaCungCap().getMaNCC());
-            pstm.setString(6, sp.getDonViTinh());
-
-            return pstm.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    // ---------------- CẬP NHẬT SẢN PHẨM ----------------
-    public boolean capNhatSanPham(SanPham sp) {
-        String sql = "UPDATE SanPham SET tenSanPham = ?, giaBan = ?, soLuong = ?, maNCC = ?, donViTinh = ? WHERE maSanPham = ?";
-        try (PreparedStatement pstm = con.prepareStatement(sql)) {
-            pstm.setString(1, sp.getTenSanPham());
-            pstm.setBigDecimal(2, sp.getGiaBan());
-            pstm.setInt(3, sp.getSoLuong());
-            pstm.setString(4, sp.getNhaCungCap().getMaNCC());
-            pstm.setString(5, sp.getDonViTinh());
-            pstm.setString(6, sp.getMaSanPham());
-
-            return pstm.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    // ---------------- TÌM THEO MÃ ----------------
-    public SanPham timTheoMa(String maSP) {
-        String sql = "SELECT * FROM SanPham WHERE maSanPham = ?";
-        try (PreparedStatement pstm = con.prepareStatement(sql)) {
-            pstm.setString(1, maSP);
-            ResultSet rs = pstm.executeQuery();
-
-            if (rs.next()) {
-                NhaCungCap ncc = new NhaCungCap(rs.getString("maNCC"), null, null, null);
-                return new SanPham(
-                        rs.getString("maSanPham"),
-                        rs.getString("tenSanPham"),
-                        rs.getBigDecimal("giaBan"),
-                        rs.getInt("soLuong"),
-                        ncc,
-                        rs.getString("donViTinh")
-                );
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    // ---------------- TÌM THEO TÊN ----------------
-    public List<SanPham> timTheoTen(String tenSanPham) {
-        List<SanPham> dsSP = new ArrayList<>();
-        String sql = "SELECT * FROM SanPham WHERE tenSanPham LIKE ?";
-        try (PreparedStatement pstm = con.prepareStatement(sql)) {
-            pstm.setString(1, "%" + tenSanPham + "%");
-            ResultSet rs = pstm.executeQuery();
-
-            while (rs.next()) {
-                NhaCungCap ncc = new NhaCungCap(rs.getString("maNCC"), null, null, null);
-                SanPham sp = new SanPham(
-                        rs.getString("maSanPham"),
-                        rs.getString("tenSanPham"),
-                        rs.getBigDecimal("giaBan"),
-                        rs.getInt("soLuong"),
-                        ncc,
-                        rs.getString("donViTinh")
-                );
-                dsSP.add(sp);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return dsSP;
-    }
-
-    // ---------------- XOÁ SẢN PHẨM ----------------
-    public boolean xoaSanPham(String maSanPham) {
-        String sql = "DELETE FROM SanPham WHERE maSanPham = ?";
-        try (PreparedStatement pstm = con.prepareStatement(sql)) {
-            pstm.setString(1, maSanPham);
-            return pstm.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+public class SanPham_Dao {
 
     public List<SanPham> getDsachSanPham() {
-        return layTatCa(); // gọi phương thức đã load sản phẩm từ DB
+      List<SanPham> dsachSanPham = new ArrayList<>();
+      try {
+          String sql = "SELECT * FROM SanPham "
+                  + "INNER JOIN LoaiSanPham ON SanPham.maLoaiSanPham = LoaiSanPham.maLoaiSanPham";
+
+          ConnectDataBase.getConnection();
+          Statement stmt = ConnectDataBase.getConnection().createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+
+          while (rs.next()) {
+              String maSP = rs.getString("maSanPham");
+              String tenSP = rs.getString("tenSanPham");
+              double giaBan = rs.getDouble("giaBan");
+              int soLuong = rs.getInt("soLuong");
+              // Tạo đối tượng LoaiSanPham từ dữ liệu trong bảng
+              String maLoai = rs.getString("maLoaiSanPham");
+              String tenLoai = rs.getString("tenLoaiSanPham");
+              LoaiSanPham loaiSanPham = new LoaiSanPham(maLoai, tenLoai);
+                String hinhAnh = rs.getString("hinhAnh");
+
+              SanPham sanPham = new SanPham(maSP, tenSP, giaBan, soLuong, loaiSanPham,hinhAnh);
+              dsachSanPham.add(sanPham);
+          }
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+        return dsachSanPham;
     }
 
+    // src/dao/SanPham_Dao.java
+    public SanPham getThongTinSanPham(String maSanPham) {
+        String sql = "SELECT * FROM SanPham WHERE maSanPham = ?";
+        try (Connection conn = ConnectDataBase.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-	public List<SanPham> getSanPhamTheoLoaiSanPham(String loai) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+            pstmt.setString(1, maSanPham); // Set the value for the placeholder
 
-	public boolean isMaSanPhamExists(String maSanPham) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    SanPham sanPham = new SanPham();
+                    sanPham.setMaSanPham(rs.getString("maSanPham"));
+                    sanPham.setTenSanPham(rs.getString("tenSanPham"));
+                    sanPham.setGiaBan(rs.getDouble("giaBan"));
+                    // Set other fields as needed
+                    return sanPham;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching product information: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return null; // Return null if no product is found
+    }
+
+    public LoaiSanPham getLoaiSanPham(String maSanPham) {
+        LoaiSanPham loaiSanPham = null;
+        String sql = "SELECT lsp.maLoaiSanPham, lsp.tenLoaiSanPham FROM LoaiSanPham lsp "
+                + "INNER JOIN SanPham sp ON lsp.maLoaiSanPham = sp.maLoaiSanPham " // Đảm bảo tên cột JOIN đúng
+                + "WHERE sp.maSanPham = ?";
 
 
+        try (Connection conn = ConnectDataBase.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, maSanPham);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    String maLoai = rs.getString("maLoaiSanPham");
+                    String tenLoai = rs.getString("tenLoaiSanPham");
+                    loaiSanPham = new LoaiSanPham(maLoai, tenLoai); // Tạo đối tượng
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi SQL khi lấy loại sản phẩm: " + e.getMessage(), e);
+
+        }
+        return loaiSanPham;
+    }
+
+    public List<SanPham> getSanPhamTheoLoaiSanPham(String loai){
+        List<SanPham> danhSach = new ArrayList<>();
+        String sql = "SELECT * FROM SanPham "
+                + "INNER JOIN LoaiSanPham ON SanPham.maLoaiSanPham = LoaiSanPham.maLoaiSanPham "
+                + "WHERE LoaiSanPham.tenLoaiSanPham = ?";
+
+        try(Connection conn = ConnectDataBase.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, loai);
+            ResultSet rs = stmt.executeQuery();
+
+            while(rs.next()){
+                String maSP = rs.getString("maSanPham");
+                String tenSP = rs.getString("tenSanPham");
+                double giaBan = rs.getDouble("giaBan");
+                int soLuong = rs.getInt("soLuong");
+                // Tạo đối tượng LoaiSanPham từ dữ liệu trong bảng
+                String maLoai = rs.getString("maLoaiSanPham");
+                String tenLoai = rs.getString("tenLoaiSanPham");
+                LoaiSanPham loaiSanPham = new LoaiSanPham(maLoai, tenLoai);
+                String hinhAnh = rs.getString("hinhAnh");
+
+                SanPham sanPham = new SanPham(maSP, tenSP, giaBan, soLuong, loaiSanPham, hinhAnh);
+                danhSach.add(sanPham);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return danhSach;
+    }
+
+    public boolean themSanPham(SanPham sp){
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        int rowsAffected = 0;
+
+        try{
+            conn = ConnectDataBase.getConnection();
+            String sql = "INSERT INTO SanPham (maSanPham, tenSanPham, giaBan, soLuong, maLoaiSanPham, hinhAnh) VALUES (?, ?, ?, ?, ?, ?)";
+            stmt = conn.prepareStatement(sql);
+
+            stmt.setString(1, sp.getMaSanPham());
+            stmt.setString(2, sp.getTenSanPham());
+            stmt.setDouble(3, sp.getGiaBan());
+            stmt.setInt(4, sp.getSoLuong());
+            stmt.setString(5, sp.getLoaiSanPham().getMaLoaiSanPham());
+            stmt.setString(6, sp.getHinhAnh());
+
+            rowsAffected = stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            closeResources(conn, stmt,null);
+        }
+        return rowsAffected > 0;
+    }
+
+    public boolean xoaSanPham(String maSP){
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        int rowsAffected = 0;
+        try{
+            conn = ConnectDataBase.getConnection();
+            String sql = "DELETE FROM SanPham WHERE maSanPham = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, maSP);
+            rowsAffected = stmt.executeUpdate();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            closeResources(conn, stmt,null);
+        }
+        return rowsAffected > 0;
+    }
+
+    public boolean suaSanPham(SanPham sp) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        int rowsAffected = 0;
+        try {
+            conn = ConnectDataBase.getConnection();
+            String sql = "UPDATE SanPham SET tenSanPham = ?, giaBan = ?, soLuong = ?, maLoaiSanPham = ?, hinhAnh = ? WHERE maSanPham = ?";
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, sp.getTenSanPham());
+            stmt.setDouble(2, sp.getGiaBan());
+            stmt.setInt(3, sp.getSoLuong());
+            stmt.setString(4, sp.getLoaiSanPham().getMaLoaiSanPham());
+            stmt.setString(5, sp.getHinhAnh());
+            stmt.setString(6, sp.getMaSanPham());
+            rowsAffected = stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeResources(conn, stmt, null);
+        }
+        return rowsAffected > 0;
+    }
+
+    // Hàm đóng kết nối để tránh lặp lại nhiều
+    private void closeResources(Connection conn, Statement stmt, ResultSet rs) {
+        try {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (conn != null) conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isMaSanPhamExists(String maSanPham) {
+        String sql = "SELECT COUNT(*) FROM SanPham WHERE maSanPham = ?";
+        try (Connection conn = ConnectDataBase.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, maSanPham);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // Trả về true nếu mã sản phẩm đã tồn tại
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

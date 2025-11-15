@@ -1,13 +1,16 @@
 package view.Manager;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfPCell;
+import controller.SanPhamController;
+import dao.SanPham_Dao;
+import entity.LoaiSanPham;
 import entity.SanPham;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.*;
-
-import controller.SanPhamController;
-import dao.SanPham_DAO;
-
 import java.awt.*;
 import java.awt.Font;
 import java.awt.Image;
@@ -22,10 +25,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Phaser;
-
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 public class SanPhamPanel extends JPanel implements ActionListener, MouseListener {
-	private SanPham_DAO sanPhamDao = new SanPham_DAO();
+    private SanPham_Dao sanPhamDao = new SanPham_Dao();
     private JPanel productCardPanel;
     private JPanel lastSelectedCard =  null;
     private SanPham selectedSanPham = null;
@@ -208,7 +213,6 @@ public class SanPhamPanel extends JPanel implements ActionListener, MouseListene
     private void showAllSanPham(){
         productCardPanel.removeAll();;
         danhSach = sanPhamDao.getDsachSanPham();
-
         for(SanPham sp : danhSach){
             productCardPanel.add(createProductCard(sp));
         }
@@ -263,7 +267,11 @@ public class SanPhamPanel extends JPanel implements ActionListener, MouseListene
      * @param donGia
      * @return true nếu thông tin hợp lệ và sản phẩm được thêm thành công, false nếu không.
      */
-    public boolean validateInput(String maSP, String tenSP, String donGia, String soLuong, String hinhAnh) {
+    public boolean validateInput(String maSP, String tenSP, String donGia, String soLuong,LoaiSanPham maloaiSP, String hinhAnh) {
+        if (maSP.isEmpty() || tenSP.isEmpty() || maloaiSP.getMaLoaiSanPham().isEmpty() || soLuong.isEmpty() || donGia.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin sản phẩm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
 
         if(!soLuong.matches("\\d+") ){
             JOptionPane.showMessageDialog(this, "Số lượng và đơn giá phải là số nguyên dương.", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -271,6 +279,12 @@ public class SanPhamPanel extends JPanel implements ActionListener, MouseListene
         }
         if(!donGia.matches("\\d+(\\.\\d+)?")){
             JOptionPane.showMessageDialog(this, "Số lượng và đơn giá phải là số thực dương.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+
+        if(!maloaiSP.getMaLoaiSanPham().matches("^LSP\\d{2,}")) {
+            JOptionPane.showMessageDialog(this, "Mã loại sản phẩm phải bắt đầu bằng 'LSP' và có ít nhất 2 ký tự số sau đó.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
@@ -321,7 +335,7 @@ public class SanPhamPanel extends JPanel implements ActionListener, MouseListene
             return;
         }
 
-        if (sanPhamDao.themSanPham(sp)) {
+        if (sanPhamDao.suaSanPham(sp)) {
             JOptionPane.showMessageDialog(this, "Sửa sản phẩm thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             showAllSanPham();
         } else {
@@ -375,6 +389,9 @@ public class SanPhamPanel extends JPanel implements ActionListener, MouseListene
                 doc.insertString(doc.getLength(), "Đơn giá: ", labelAttr);
                 doc.insertString(doc.getLength(), selectedSanPham.getGiaBan() + " NVĐ\n", dataAttr);
 
+                doc.insertString(doc.getLength(), "Loại sản phẩm: ", labelAttr);
+                doc.insertString(doc.getLength(), selectedSanPham.getLoaiSanPham().getTenLoaiSanPham() + "\n", dataAttr);
+
                 doc.insertString(doc.getLength(), "Hình ảnh: ", labelAttr);
                 doc.insertString(doc.getLength(), selectedSanPham.getHinhAnh(), dataAttr);
             } catch (BadLocationException e) {
@@ -394,7 +411,100 @@ public class SanPhamPanel extends JPanel implements ActionListener, MouseListene
         }
     }
 
+    public void xuatPDF() {
+        if(danhSach != null && !danhSach.isEmpty()) {
+            Document document = new Document();
+            String fileName = "DanhSachSanPhamPDF/DanhSachSanPham.pdf";
+            try {
+                PdfWriter.getInstance(document, new FileOutputStream(fileName));
+                document.open();
 
+                BaseFont font = BaseFont.createFont("fonts/arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                com.itextpdf.text.Font titleFont = new com.itextpdf.text.Font(font, 24, com.itextpdf.text.Font.BOLD);
+                com.itextpdf.text.Font headerFont = new com.itextpdf.text.Font(font, 14, com.itextpdf.text.Font.BOLD);
+                com.itextpdf.text.Font cellFont = new com.itextpdf.text.Font(font, 12);
+                com.itextpdf.text.Font normalFont = new com.itextpdf.text.Font(font, 12);
+
+                Paragraph title = new Paragraph("DANH SÁCH SẢN PHẨM\n\n", titleFont);
+                title.setAlignment(Element.ALIGN_CENTER);
+                document.add(title);
+
+                String ngayXuat = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+                Paragraph date = new Paragraph("Ngày xuất: " + ngayXuat + "\n\n", normalFont);
+                date.setAlignment(Element.ALIGN_CENTER);
+                document.add(date);
+
+                Map<String, List<SanPham>> sanPhamTheoLoai = new TreeMap<>();
+                for (SanPham sp : danhSach) {
+                    String loai = sp.getLoaiSanPham().getTenLoaiSanPham();
+                    if (!sanPhamTheoLoai.containsKey(loai)) {
+                        sanPhamTheoLoai.put(loai, new ArrayList<>());
+                    }
+                    sanPhamTheoLoai.get(loai).add(sp);
+                }
+
+                int tongSoLuong = 0;
+
+                for (Map.Entry<String, List<SanPham>> entry : sanPhamTheoLoai.entrySet()) {
+                    String tenLoai = entry.getKey();
+                    List<SanPham> sanPhamList = entry.getValue();
+
+                    Paragraph loaiParagraph = new Paragraph(tenLoai + "\n\n", headerFont);
+                    loaiParagraph.setAlignment(Element.ALIGN_LEFT);
+                    document.add(loaiParagraph);
+
+                    PdfPTable table = new PdfPTable(6);
+                    table.setWidthPercentage(100);
+                    table.setSpacingBefore(10f);
+                    table.setSpacingAfter(10f);
+
+                    String[] headers = {"Mã Sản Phẩm", "Tên Sản Phẩm", "Số Lượng", "Đơn Giá", "Loại Sản Phẩm", "Hình Ảnh"};
+                    for (String header : headers) {
+                        PdfPCell headerCell = new PdfPCell(new Phrase(header, headerFont));
+                        headerCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        table.addCell(headerCell);
+                    }
+
+                    for (SanPham sp : sanPhamList) {
+                        table.addCell(new Phrase(sp.getMaSanPham(), cellFont));
+                        table.addCell(new Phrase(sp.getTenSanPham(), cellFont));
+                        table.addCell(new Phrase(String.valueOf(sp.getSoLuong()), cellFont));
+                        table.addCell(new Phrase(String.valueOf(sp.getGiaBan()) + " NVĐ", cellFont));
+                        table.addCell(new Phrase(sp.getLoaiSanPham().getTenLoaiSanPham(), cellFont));
+                        table.addCell(new Phrase(sp.getHinhAnh(), cellFont));
+
+                        tongSoLuong += sp.getSoLuong();
+                    }
+                    document.add(table);
+                }
+                Paragraph tongSoLuongPara = new Paragraph("\nTổng số lượng sản phẩm trong kho:" + tongSoLuong, normalFont);
+                tongSoLuongPara.setAlignment(Element.ALIGN_LEFT);
+                document.add(tongSoLuongPara);
+
+                JOptionPane.showMessageDialog(this, "Xuất PDF thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            }
+            catch (Exception e){
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Xuất PDF thất bại!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+            }
+            finally {
+                document.close();
+
+                if(Desktop.isDesktopSupported()){
+                    try{
+                        File pdfFile = new File(fileName);
+                        Desktop.getDesktop().open(pdfFile);
+                    }catch (IOException ex){
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(this, "Không thể mở file PDF!", "Thông báo", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Không có sản phẩm nào để xuất!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+        }
+    }
 
     private void highlightSelectedCard(JPanel card){
         if(lastSelectedCard != null){
@@ -404,7 +514,17 @@ public class SanPhamPanel extends JPanel implements ActionListener, MouseListene
         lastSelectedCard = card;
     }
 
+    public void dialogThemSanPham(){
+        ThemSanPhamDialog dialogThem = new ThemSanPhamDialog(
+                (JFrame) SwingUtilities.getWindowAncestor(this),"Thêm Sản Phẩm", this);
+        dialogThem.setVisible(true);
+    }
 
+    public void dialogSuaSanPham(SanPham sanPham) {
+        SuaSanPhamDialog dialogSua = new SuaSanPhamDialog(
+                (JFrame) SwingUtilities.getWindowAncestor(this), "Sửa Sản Phẩm", this);
+        dialogSua.setVisible(true);
+    }
 
     private void timKiemSanPham(){
         String luaChon = (String) searchComboBox.getSelectedItem();
@@ -454,11 +574,15 @@ public class SanPhamPanel extends JPanel implements ActionListener, MouseListene
         }
         String command = e.getActionCommand();
         switch (command){
-          
+            case "Thêm":
+                dialogThemSanPham();
+                break;
             case "Xem chi tiết":
                 xemChiTiet();
                 break;
-         
+            case "Xuất PDF":
+                xuatPDF();
+                break;
             default:
                 break;
         }
@@ -504,4 +628,3 @@ public class SanPhamPanel extends JPanel implements ActionListener, MouseListene
 
     }
 }
-
